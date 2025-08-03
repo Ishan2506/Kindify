@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:kindify_app/views/screens/splashScreen.dart';
 
 void main() {
-  runApp(MaterialApp(debugShowCheckedModeBanner: false, home: MyApp()));
+  runApp(MaterialApp(debugShowCheckedModeBanner: false, home: SplashScreen()));
 }
 
 class MyApp extends StatelessWidget {
@@ -22,6 +23,20 @@ class MyApp extends StatelessWidget {
             children: [Text("Jai Dwarkadish!!")],
           ),
         ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) {
+                return SplashScreen();
+              },
+            ),
+          );
+        },
+        backgroundColor: Colors.yellow,
+        child: Icon(Icons.arrow_forward_ios),
       ),
     );
   }
