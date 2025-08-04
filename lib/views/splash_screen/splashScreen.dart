@@ -8,14 +8,12 @@ class SplashScreen extends StatefulWidget {
   State<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen>
-    with TickerProviderStateMixin {
-  late AnimationController _logoController;
-  late AnimationController _textController;
+class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMixin {
+  late final AnimationController _logoController;
+  late final AnimationController _textController;
 
-  late Animation<double> _scaleAnimation;
-  late Animation<Alignment> _alignmentAnimation;
-  late Animation<double> _fadeTextAnimation;
+  late final Animation<double> _scaleAnimation;
+  late final Animation<double> _fadeTextAnimation;
 
   final SplashController _controller = SplashController();
 
@@ -25,7 +23,7 @@ class _SplashScreenState extends State<SplashScreen>
 
     _logoController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 3000),
+      duration: const Duration(milliseconds: 2000),
     );
 
     _textController = AnimationController(
@@ -33,14 +31,7 @@ class _SplashScreenState extends State<SplashScreen>
       duration: const Duration(milliseconds: 1000),
     );
 
-    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.4).animate(
-      CurvedAnimation(parent: _logoController, curve: Curves.easeInOut),
-    );
-
-    _alignmentAnimation = AlignmentTween(
-      begin: Alignment.center,
-      end: const Alignment(-0.4, 0.0), // Move slightly left after scaling
-    ).animate(
+    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.5).animate(
       CurvedAnimation(parent: _logoController, curve: Curves.easeInOut),
     );
 
@@ -48,12 +39,12 @@ class _SplashScreenState extends State<SplashScreen>
       CurvedAnimation(parent: _textController, curve: Curves.easeIn),
     );
 
-    // Start animations with delays
-    Future.delayed(const Duration(seconds: 2), () {
+    // Start animations
+    Future.delayed(const Duration(milliseconds: 500), () {
       _logoController.forward();
     });
 
-    Future.delayed(const Duration(milliseconds: 4000), () {
+    Future.delayed(const Duration(milliseconds: 2000), () {
       _textController.forward();
     });
 
@@ -71,54 +62,54 @@ class _SplashScreenState extends State<SplashScreen>
 
   @override
   Widget build(BuildContext context) {
+    final screenSize = MediaQuery.of(context).size;
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: AnimatedBuilder(
-        animation: _logoController,
+        animation: Listenable.merge([_logoController, _textController]),
         builder: (context, child) {
-          return Stack(
-            children: [
-              Align(
-                alignment: _alignmentAnimation.value,
-                child: Transform.scale(
-                  scale: _scaleAnimation.value,
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Image.asset(
-                        "assets/images/kindifyLogo.jpg",
-                        width: MediaQuery.of(context).size.width * 0.35,
-                        height: MediaQuery.of(context).size.height * 0.18,
-                        fit: BoxFit.contain,
-                      ),
-                      const SizedBox(width: 12),
-                      FadeTransition(
-                        opacity: _fadeTextAnimation,
-                        child: Text(
-                          "Kindify",
-                          style: TextStyle(
-                            fontSize: 36,
-                            fontWeight: FontWeight.bold,
-                            foreground: Paint()
-                              ..shader = const LinearGradient(
-                                colors: [
-                                  Color(0xFFF26B6C), // Pink
-                                  Color(0xFFB569AB), // Purple
-                                  Color(0xFFFCB248), // Orange
-                                ],
-                              ).createShader(const Rect.fromLTWH(0.0, 0.0, 200.0, 70.0)),
-                          ),
+          return Center(
+            child: Transform.scale(
+              scale: _scaleAnimation.value,
+              alignment: Alignment.center,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Image.asset(
+                    "assets/images/kindifyLogo.jpg",
+                    width: screenSize.width * 0.35,
+                    height: screenSize.height * 0.18,
+                    fit: BoxFit.contain,
+                  ),
+                  const SizedBox(width: 10), // Tight controlled spacing
+                  FadeTransition(
+                    opacity: _fadeTextAnimation,
+                    child: ShaderMask(
+                      shaderCallback: (bounds) => const LinearGradient(
+                        colors: [
+                          Color(0xFFF26B6C),
+                          Color(0xFFB569AB),
+                          Color(0xFFFCB248),
+                        ],
+                      ).createShader(bounds),
+                      child: const Text(
+                        "Kindify",
+                        style: TextStyle(
+                          fontSize: 32,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white, // Required for shader
                         ),
                       ),
-                    ],
+                    ),
                   ),
-                ),
+                ],
               ),
-            ],
+            ),
           );
         },
       ),
     );
   }
 }
-

@@ -14,82 +14,125 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFDF5F5),
+      backgroundColor: Colors.white,
       body: SafeArea(
+        top: true,
+        minimum: const EdgeInsets.only(top: 20),
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 36),
+          padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Image.asset(
-                "assets/images/kindifyLogo.jpg",
-                width: 120,
-                height: 120,
+              const SizedBox(height: 40),
+              const Text(
+                "Login",
+                style: TextStyle(
+                  fontSize: 32,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFFF26B6C),
+                ),
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 16),
+              const Text(
+                "Select your role to continue",
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.grey,
+                ),
+              ),
+              const SizedBox(height: 40),
               ToggleButtons(
                 borderRadius: BorderRadius.circular(12),
                 fillColor: const Color(0xFFFCB248),
                 selectedColor: Colors.white,
                 color: Colors.black,
                 isSelected: _controller.roleSelection,
-                onPressed: _controller.toggleRole,
+                onPressed: (index) {
+                  setState(() {
+                    _controller.toggleRole(index);
+                  });
+                },
                 children: const [
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 24),
-                    child: Text("Admin"),
+                  SizedBox(
+                    width: 160,
+                    height: 50,
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.shield),
+                          SizedBox(width: 8),
+                          Text("Trust"),
+                        ],
+                      ),
+                    ),
                   ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 24),
-                    child: Text("User"),
+                  SizedBox(
+                    width: 160,
+                    height: 50,
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.person),
+                          SizedBox(width: 8),
+                          Text("User"),
+                        ],
+                      ),
+                    ),
                   ),
                 ],
               ),
-              const SizedBox(height: 36),
-              TextField(
-                controller: _controller.emailController,
-                decoration: InputDecoration(
-                  labelText: "Email",
-                  prefixIcon: const Icon(Icons.email),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
+              const SizedBox(height: 40),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text(
+                    "+91",
+                    style: TextStyle(fontSize: 16, color: Color(0xFFB569AB)),
                   ),
+                  const SizedBox(width: 12),
+                  SizedBox(
+                    width: 300,
+                    child: TextField(
+                      controller: _controller.emailController,
+                      keyboardType: TextInputType.phone,
+                      decoration: InputDecoration(
+                        labelText: "Enter Mobile Number",
+                        labelStyle: const TextStyle(color: Color(0xFFB569AB)),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 40),
+              SizedBox(
+                width: 200,
+                child: ElevatedButton(
+                  onPressed: () => _controller.login(context),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFFF26B6C),
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: const Text("Continue"),
                 ),
               ),
               const SizedBox(height: 20),
-              TextField(
-                controller: _controller.passwordController,
-                obscureText: !_controller.showPassword,
-                decoration: InputDecoration(
-                  labelText: "Password",
-                  prefixIcon: const Icon(Icons.lock),
-                  suffixIcon: IconButton(
-                    icon: Icon(_controller.showPassword
-                        ? Icons.visibility
-                        : Icons.visibility_off),
-                    onPressed: () {
-                      setState(() {
-                        _controller.togglePasswordVisibility();
-                      });
-                    },
-                  ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
+              const Text(
+                "By continuing, you agree to Terms of Service",
+                style: TextStyle(fontSize: 12, color: Colors.grey),
+                textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 32),
-              ElevatedButton(
-                onPressed: () => _controller.login(context),
-                style: ElevatedButton.styleFrom(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12)),
-                  backgroundColor: const Color(0xFFB569AB),
-                  foregroundColor: Colors.white,
-                ),
-                child: const Text("Login"),
-              ),
+              const SizedBox(height: 40),
             ],
           ),
         ),

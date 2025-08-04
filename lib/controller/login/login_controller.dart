@@ -4,13 +4,7 @@ class LoginController {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
 
-  bool showPassword = false;
-
-  List<bool> roleSelection = [true, false]; // Admin selected by default
-
-  void togglePasswordVisibility() {
-    showPassword = !showPassword;
-  }
+  List<bool> roleSelection = [true, false]; // Trust selected by default
 
   void toggleRole(int index) {
     for (int i = 0; i < roleSelection.length; i++) {
@@ -20,18 +14,17 @@ class LoginController {
 
   void login(BuildContext context) {
     String email = emailController.text.trim();
-    String password = passwordController.text.trim();
-    String role = roleSelection[0] ? "Admin" : "User";
+    String role = roleSelection[0] ? "Trust" : "User";
 
-    if (email.isEmpty || password.isEmpty) {
+    if (email.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Please fill all fields")),
+        const SnackBar(content: Text("Please enter mobile number")),
       );
       return;
     }
 
     // You can add real login logic here
-    debugPrint("Login as $role: $email - $password");
+    debugPrint("Login as $role: $email");
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text("Logged in as $role")),
