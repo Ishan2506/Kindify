@@ -1,5 +1,7 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:kindify_app/controller/login/login_controller.dart';
+import 'package:kindify_app/utils/colors.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -14,129 +16,261 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      body: SafeArea(
-        top: true,
-        minimum: const EdgeInsets.only(top: 20),
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
+      backgroundColor: const Color(0xFFFDF5F5),
+      body: SingleChildScrollView(
+        child: Container(
+          height: MediaQuery.sizeOf(context).height,
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const SizedBox(height: 40),
-              const Text(
-                "Login",
-                style: TextStyle(
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFFF26B6C),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 5),
+                child: Image.asset(
+                  "assets/images/kindifyLogo.png",
+                  width: 150,
+                  height: 150,
                 ),
               ),
-              const SizedBox(height: 16),
-              const Text(
-                "Select your role to continue",
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.grey,
-                ),
-              ),
-              const SizedBox(height: 40),
-              ToggleButtons(
-                borderRadius: BorderRadius.circular(12),
-                fillColor: const Color(0xFFFCB248),
-                selectedColor: Colors.white,
-                color: Colors.black,
-                isSelected: _controller.roleSelection,
-                onPressed: (index) {
-                  setState(() {
-                    _controller.toggleRole(index);
-                  });
-                },
-                children: const [
-                  SizedBox(
-                    width: 160,
-                    height: 50,
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.shield),
-                          SizedBox(width: 8),
-                          Text("Trust"),
-                        ],
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    width: 160,
-                    height: 50,
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.person),
-                          SizedBox(width: 8),
-                          Text("User"),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 40),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text(
-                    "+91",
-                    style: TextStyle(fontSize: 16, color: Color(0xFFB569AB)),
+                  Container(
+                    margin: EdgeInsets.symmetric(horizontal: 15),
+                    padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                    width: 140,
+                    height: 70,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey),
+                      borderRadius: BorderRadius.all(Radius.elliptical(6, 6)),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.shield),
+                        SizedBox(width: 10),
+                        Text("Trust"),
+                      ],
+                    ),
                   ),
-                  const SizedBox(width: 12),
-                  SizedBox(
-                    width: 300,
-                    child: TextField(
-                      controller: _controller.emailController,
-                      keyboardType: TextInputType.phone,
-                      decoration: InputDecoration(
-                        labelText: "Enter Mobile Number",
-                        labelStyle: const TextStyle(color: Color(0xFFB569AB)),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
+                  Container(
+                    margin: EdgeInsets.symmetric(horizontal: 15),
+                    padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                    width: 140,
+                    height: 70,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey),
+                      borderRadius: BorderRadius.all(Radius.elliptical(6, 6)),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.person),
+                        SizedBox(width: 10),
+                        Text("User"),
+                      ],
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 40),
-              SizedBox(
-                width: 200,
-                child: ElevatedButton(
-                  onPressed: () => _controller.login(context),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFF26B6C),
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+              SizedBox(height: 15),
+              Container(
+                width: 315,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 15),
+                  child: TextField(
+                    controller: _controller.emailController,
+                    keyboardType: TextInputType.phone,
+                    decoration: InputDecoration(
+                      hintText: "Enter mobile number",
+                      prefixIcon: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text("+91", style: TextStyle(fontSize: 16)),
+                            const SizedBox(width: 8),
+                            Container(height: 24, width: 1, color: Colors.grey),
+                          ],
+                        ),
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                     ),
                   ),
-                  child: const Text("Continue"),
                 ),
               ),
-              const SizedBox(height: 20),
-              const Text(
-                "By continuing, you agree to Terms of Service",
-                style: TextStyle(fontSize: 12, color: Colors.grey),
-                textAlign: TextAlign.center,
+              SizedBox(height: 25),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    width: 325,
+                    child: Row(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(right: 5),
+                          child: Checkbox(value: true, onChanged: (value) {}),
+                        ),
+                        RichText(
+                          text: TextSpan(
+                            children: [
+                              // Regular black text
+                              const TextSpan(
+                                text: "I agree to the ",
+                                style: TextStyle(
+                                  color: AppColors.blackColor,
+                                  fontSize:
+                                      15, // Set your desired font size here
+                                  fontWeight: FontWeight.normal,
+                                ),
+                              ),
+
+                              // Gradient for Terms & Conditions (same style, no underline)
+                              WidgetSpan(
+                                alignment: PlaceholderAlignment.baseline,
+                                baseline: TextBaseline.alphabetic,
+                                child: MouseRegion(
+                                  cursor: SystemMouseCursors.click,
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      // Handle Terms tap
+                                    },
+                                    child: ShaderMask(
+                                      shaderCallback: (bounds) =>
+                                          const LinearGradient(
+                                            colors: [
+                                              AppColors.orange,
+                                              AppColors.primaryPink,
+                                            ],
+                                          ).createShader(
+                                            Rect.fromLTWH(
+                                              0,
+                                              0,
+                                              bounds.width,
+                                              bounds.height,
+                                            ),
+                                          ),
+                                      child: const Text(
+                                        "Terms & Conditions ",
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.normal,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+
+                              // Regular black text
+                              const TextSpan(
+                                text: "\nand ",
+                                style: TextStyle(
+                                  color: AppColors.blackColor,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.normal,
+                                ),
+                              ),
+
+                              // Gradient for Privacy Policy (same style, no underline)
+                              WidgetSpan(
+                                alignment: PlaceholderAlignment.baseline,
+                                baseline: TextBaseline.alphabetic,
+                                child: MouseRegion(
+                                  cursor: SystemMouseCursors.click,
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      // Handle Privacy Policy tap
+                                    },
+                                    child: ShaderMask(
+                                      shaderCallback: (bounds) =>
+                                          const LinearGradient(
+                                            colors: [
+                                              AppColors.orange,
+                                              AppColors.primaryPink,
+                                            ],
+                                          ).createShader(
+                                            Rect.fromLTWH(
+                                              0,
+                                              0,
+                                              bounds.width,
+                                              bounds.height,
+                                            ),
+                                          ),
+                                      child: const Text(
+                                        "Privacy Policy.",
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.normal,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(height: 40),
+              SizedBox(height: 15),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    width: 325,
+                    child: Row(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(right: 5.0),
+                          child: Checkbox(value: false, onChanged: (value) {}),
+                        ),
+                        Text(
+                          "I consent to secure UPI donations \nand account verification process.",
+                          style: TextStyle(fontSize: 15),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 40),
+              loginBtn(),
             ],
           ),
         ),
       ),
     );
   }
+}
+
+Widget loginBtn() {
+  return Container(
+    width: 310,
+    height: 55,
+    decoration: BoxDecoration(
+      gradient: LinearGradient(
+        colors: [Color(0xFFF56A79), Color(0xFFFCB248)],
+        begin: Alignment.centerLeft,
+        end: Alignment.centerRight,
+      ),
+      borderRadius: BorderRadius.all(Radius.elliptical(8, 8)),
+    ),
+    child: Center(
+      child: Text(
+        "Continue",
+        style: TextStyle(
+          color: Colors.white,
+          fontWeight: FontWeight.bold,
+          fontSize: 18,
+        ),
+      ),
+    ),
+  );
 }
