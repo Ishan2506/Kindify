@@ -2,6 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:kindify_app/controller/login/login_controller.dart';
 import 'package:kindify_app/utils/colors.dart';
+import 'package:kindify_app/views/login/otp_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -12,6 +13,50 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final LoginController _controller = LoginController();
+  bool _upiConsent = false;
+  bool _policy = false;
+  final RegExp _phoneRegex = RegExp(r'^[6-9]\d{9}$');
+  String _selectedRole = '';
+
+  Widget _buildSelectableCard(String title,IconData icon)
+  {
+    final isSelected = _selectedRole == title;
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          _selectedRole = title;
+        });
+      },
+      child: Container(
+        margin: EdgeInsets.symmetric(horizontal: 10),
+        width: 140,
+        height: 70,
+        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+        decoration: BoxDecoration(
+          color: isSelected ? Color(0xFFFEEAE6) : Colors.white,
+          border: Border.all(
+            color: isSelected ? Color(0xFFF26A4B) : Colors.grey,
+            width: 2,
+          ),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, color: isSelected ? Color(0xFFF26A4B) : Colors.black),
+            SizedBox(width: 10),
+            Text(
+              title,
+              style: TextStyle(
+                color: isSelected ? Color(0xFFF26A4B) : Colors.black,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,42 +79,8 @@ class _LoginScreenState extends State<LoginScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Container(
-                    margin: EdgeInsets.symmetric(horizontal: 15),
-                    padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-                    width: 140,
-                    height: 70,
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.grey),
-                      borderRadius: BorderRadius.all(Radius.elliptical(6, 6)),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.shield),
-                        SizedBox(width: 10),
-                        Text("Trust"),
-                      ],
-                    ),
-                  ),
-                  Container(
-                    margin: EdgeInsets.symmetric(horizontal: 15),
-                    padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-                    width: 140,
-                    height: 70,
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.grey),
-                      borderRadius: BorderRadius.all(Radius.elliptical(6, 6)),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.person),
-                        SizedBox(width: 10),
-                        Text("User"),
-                      ],
-                    ),
-                  ),
+                  _buildSelectableCard("Trust", Icons.shield),
+                  _buildSelectableCard("User", Icons.person),
                 ],
               ),
               SizedBox(height: 15),
@@ -110,7 +121,11 @@ class _LoginScreenState extends State<LoginScreen> {
                       children: [
                         Padding(
                           padding: const EdgeInsets.only(right: 5),
-                          child: Checkbox(value: true, onChanged: (value) {}),
+                          child: Checkbox(value: _policy, onChanged: (value) {
+                            setState(() {
+                              _policy = value ?? false;
+                            });
+                          }),
                         ),
                         RichText(
                           text: TextSpan(
@@ -229,7 +244,11 @@ class _LoginScreenState extends State<LoginScreen> {
                       children: [
                         Padding(
                           padding: const EdgeInsets.only(right: 5.0),
-                          child: Checkbox(value: false, onChanged: (value) {}),
+                          child: Checkbox(value: _upiConsent, onChanged: (value) {
+                            setState(() {
+                              _upiConsent = value ?? false;
+                            });
+                          }),
                         ),
                         Text(
                           "I consent to secure UPI donations \nand account verification process.",
@@ -241,7 +260,30 @@ class _LoginScreenState extends State<LoginScreen> {
                 ],
               ),
               SizedBox(height: 40),
-              loginBtn(),
+              GestureDetector(
+  onTap: () {
+    String phone = _controller.emailController.text.trim();
+    if (!_policy || !_upiConsent) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Please agree to the Terms and give UPI consent.")),
+      );
+      return;
+    }
+    if (_phoneRegex.hasMatch(phone)) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => CustomOtpScreen(phoneNumber: phone),
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Please enter a valid 10-digit number")),
+      );
+    }
+  },
+  child: loginBtn(),
+),
             ],
           ),
         ),
