@@ -66,7 +66,7 @@ class _TermsAndConditionsState extends State<TermsAndConditions> {
             SizedBox(
               height:
                   MediaQuery.sizeOf(context).height *
-                  0.7, // fixed height for scroll
+                  0.71, // fixed height for scroll
               child: SingleChildScrollView(
                 padding: const EdgeInsets.symmetric(horizontal: 33),
                 child: Text(

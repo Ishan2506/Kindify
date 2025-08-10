@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:kindify_app/controller/login/login_controller.dart';
 import 'package:kindify_app/utils/colors.dart';
 import 'package:kindify_app/views/login/otp_screen.dart';
+import 'package:kindify_app/views/terms_conditions/terms_conditions.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -18,8 +19,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final RegExp _phoneRegex = RegExp(r'^[6-9]\d{9}$');
   String _selectedRole = '';
 
-  Widget _buildSelectableCard(String title,IconData icon)
-  {
+  Widget _buildSelectableCard(String title, IconData icon) {
     final isSelected = _selectedRole == title;
     return GestureDetector(
       onTap: () {
@@ -121,11 +121,14 @@ class _LoginScreenState extends State<LoginScreen> {
                       children: [
                         Padding(
                           padding: const EdgeInsets.only(right: 5),
-                          child: Checkbox(value: _policy, onChanged: (value) {
-                            setState(() {
-                              _policy = value ?? false;
-                            });
-                          }),
+                          child: Checkbox(
+                            value: _policy,
+                            onChanged: (value) {
+                              setState(() {
+                                _policy = value ?? false;
+                              });
+                            },
+                          ),
                         ),
                         RichText(
                           text: TextSpan(
@@ -149,7 +152,14 @@ class _LoginScreenState extends State<LoginScreen> {
                                   cursor: SystemMouseCursors.click,
                                   child: GestureDetector(
                                     onTap: () {
-                                      // Handle Terms tap
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) {
+                                            return TermsAndConditions();
+                                          },
+                                        ),
+                                      );
                                     },
                                     child: ShaderMask(
                                       shaderCallback: (bounds) =>
@@ -244,11 +254,14 @@ class _LoginScreenState extends State<LoginScreen> {
                       children: [
                         Padding(
                           padding: const EdgeInsets.only(right: 5.0),
-                          child: Checkbox(value: _upiConsent, onChanged: (value) {
-                            setState(() {
-                              _upiConsent = value ?? false;
-                            });
-                          }),
+                          child: Checkbox(
+                            value: _upiConsent,
+                            onChanged: (value) {
+                              setState(() {
+                                _upiConsent = value ?? false;
+                              });
+                            },
+                          ),
                         ),
                         Text(
                           "I consent to secure UPI donations \nand account verification process.",
@@ -261,29 +274,36 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               SizedBox(height: 40),
               GestureDetector(
-  onTap: () {
-    String phone = _controller.emailController.text.trim();
-    if (!_policy || !_upiConsent) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Please agree to the Terms and give UPI consent.")),
-      );
-      return;
-    }
-    if (_phoneRegex.hasMatch(phone)) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => CustomOtpScreen(phoneNumber: phone),
-        ),
-      );
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Please enter a valid 10-digit number")),
-      );
-    }
-  },
-  child: loginBtn(),
-),
+                onTap: () {
+                  String phone = _controller.emailController.text.trim();
+                  if (!_policy || !_upiConsent) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text(
+                          "Please agree to the Terms and give UPI consent.",
+                        ),
+                      ),
+                    );
+                    return;
+                  }
+                  if (_phoneRegex.hasMatch(phone)) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            CustomOtpScreen(phoneNumber: phone),
+                      ),
+                    );
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text("Please enter a valid 10-digit number"),
+                      ),
+                    );
+                  }
+                },
+                child: loginBtn(),
+              ),
             ],
           ),
         ),
