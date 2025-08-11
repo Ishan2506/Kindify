@@ -16,15 +16,19 @@ class _LoginScreenState extends State<LoginScreen> {
   final LoginController _controller = LoginController();
   bool _upiConsent = false;
   bool _policy = false;
-  final RegExp _phoneRegex = RegExp(r'^[6-9]\d{9}$');
-  String _selectedRole = '';
+  final RegExp _emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
 
-  Widget _buildSelectableCard(String title, IconData icon) {
-    final isSelected = _selectedRole == title;
+  Future<void> regsiter (BuildContext content) async {
+    //String email= 
+  }
+
+  Widget _buildSelectableCard(String title,IconData icon)
+  {
+    final isSelected = _controller.selectedRole == title;
     return GestureDetector(
       onTap: () {
         setState(() {
-          _selectedRole = title;
+          _controller.toggleRole(title);
         });
       },
       child: Container(
@@ -90,19 +94,12 @@ class _LoginScreenState extends State<LoginScreen> {
                   padding: const EdgeInsets.symmetric(vertical: 15),
                   child: TextField(
                     controller: _controller.emailController,
-                    keyboardType: TextInputType.phone,
+                    keyboardType: TextInputType.emailAddress,
                     decoration: InputDecoration(
-                      hintText: "Enter mobile number",
+                      hintText: "Enter Email Address",
                       prefixIcon: Container(
                         padding: const EdgeInsets.symmetric(horizontal: 12),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text("+91", style: TextStyle(fontSize: 16)),
-                            const SizedBox(width: 8),
-                            Container(height: 24, width: 1, color: Colors.grey),
-                          ],
-                        ),
+                        child: Icon(Icons.email_outlined, color: Colors.grey),
                       ),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -273,36 +270,62 @@ class _LoginScreenState extends State<LoginScreen> {
                 ],
               ),
               SizedBox(height: 40),
-              GestureDetector(
-                onTap: () {
-                  String phone = _controller.emailController.text.trim();
-                  if (!_policy || !_upiConsent) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text(
-                          "Please agree to the Terms and give UPI consent.",
+              Column(
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      String email = _controller.emailController.text.trim();
+                      if (!_policy || !_upiConsent) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text("Please agree to the Terms and give UPI consent.")),
+                        );
+                        return;
+                      }
+                      if (email.isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text("Please fill field!!")),
+                        );
+                        return;
+                      }
+                      if (_emailRegex.hasMatch(email)) {
+                        _controller.register(context);
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => CustomOtpScreen(phoneNumber: email),
+                          ),
+                        );
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text("Please enter a valid email address")),
+                        );
+                      }
+                    },
+                    child: loginBtn(),
+                  ),
+                  const SizedBox(height: 20,),
+                  //Register as trust?
+                  GestureDetector(
+                    onTap: () {
+                      
+                    },
+                    child: ShaderMask(
+                      shaderCallback: (bounds) => LinearGradient(
+                        colors: [Color(0xFFF56A79), Color(0xFFFCB248)],
+                        begin: Alignment.centerLeft,
+                        end: Alignment.centerRight
+                      ).createShader(Rect.fromLTWH(0, 0,bounds.width, bounds.height)),
+                      child: Text(
+                        "Register as Trust?",
+                        style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white, // Required for ShaderMask
                         ),
                       ),
-                    );
-                    return;
-                  }
-                  if (_phoneRegex.hasMatch(phone)) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            CustomOtpScreen(phoneNumber: phone),
-                      ),
-                    );
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text("Please enter a valid 10-digit number"),
-                      ),
-                    );
-                  }
-                },
-                child: loginBtn(),
+                    ),
+                  )
+                ],
               ),
             ],
           ),
