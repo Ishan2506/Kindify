@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:kindify_app/controller/login/login_controller.dart';
 import 'package:kindify_app/utils/colors.dart';
 import 'package:kindify_app/views/login/otp_screen.dart';
+import 'package:kindify_app/views/registration/registrationPage.dart';
 import 'package:kindify_app/views/terms_conditions/terms_conditions.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -18,12 +19,11 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _policy = false;
   final RegExp _emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
 
-  Future<void> regsiter (BuildContext content) async {
-    //String email= 
+  Future<void> regsiter(BuildContext content) async {
+    //String email=
   }
 
-  Widget _buildSelectableCard(String title,IconData icon)
-  {
+  Widget _buildSelectableCard(String title, IconData icon) {
     final isSelected = _controller.selectedRole == title;
     return GestureDetector(
       onTap: () {
@@ -277,7 +277,11 @@ class _LoginScreenState extends State<LoginScreen> {
                       String email = _controller.emailController.text.trim();
                       if (!_policy || !_upiConsent) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text("Please agree to the Terms and give UPI consent.")),
+                          const SnackBar(
+                            content: Text(
+                              "Please agree to the Terms and give UPI consent.",
+                            ),
+                          ),
                         );
                         return;
                       }
@@ -292,39 +296,52 @@ class _LoginScreenState extends State<LoginScreen> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => CustomOtpScreen(phoneNumber: email),
+                            builder: (context) =>
+                                CustomOtpScreen(phoneNumber: email),
                           ),
                         );
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text("Please enter a valid email address")),
+                          const SnackBar(
+                            content: Text("Please enter a valid email address"),
+                          ),
                         );
                       }
                     },
                     child: loginBtn(),
                   ),
-                  const SizedBox(height: 20,),
+                  const SizedBox(height: 20),
                   //Register as trust?
                   GestureDetector(
                     onTap: () {
-                      
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) {
+                            return RegistrationPage();
+                          },
+                        ),
+                      );
                     },
                     child: ShaderMask(
-                      shaderCallback: (bounds) => LinearGradient(
-                        colors: [Color(0xFFF56A79), Color(0xFFFCB248)],
-                        begin: Alignment.centerLeft,
-                        end: Alignment.centerRight
-                      ).createShader(Rect.fromLTWH(0, 0,bounds.width, bounds.height)),
+                      shaderCallback: (bounds) =>
+                          LinearGradient(
+                            colors: [Color(0xFFF56A79), Color(0xFFFCB248)],
+                            begin: Alignment.centerLeft,
+                            end: Alignment.centerRight,
+                          ).createShader(
+                            Rect.fromLTWH(0, 0, bounds.width, bounds.height),
+                          ),
                       child: Text(
                         "Register as Trust?",
                         style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white, // Required for ShaderMask
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white, // Required for ShaderMask
                         ),
                       ),
                     ),
-                  )
+                  ),
                 ],
               ),
             ],
