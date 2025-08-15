@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:kindify_app/views/login/otp_screen.dart';
+import 'package:kindify_app/views/registration/registrationPage.dart';
 
 class LoginController {
   TextEditingController emailController = TextEditingController();
@@ -41,6 +42,12 @@ class LoginController {
       }
       else if(response.statusCode == 404){
         _showSnack(content,"User not Found!");
+      }
+      else if(jsonRes['message'] == 'Please register first as Trust'){
+        Navigator.push(content,MaterialPageRoute(
+            builder: (context) => RegistrationPage()
+          ),
+        );
       }
       else{
          _showSnack(content,"${jsonRes['message'] as String}");

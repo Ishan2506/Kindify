@@ -75,11 +75,11 @@ class _RegistrationPageState extends State<RegistrationPage> {
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 12.0),
-                  child: registrationController.pickedImage == null
+                  child: registrationController.pickedFile == null
                       ? InkWell(
                           onTap: () async {
                             final error = await registrationController
-                                .pickImage();
+                                .pickFile();
                             if (error != null) {
                               ScaffoldMessenger.of(
                                 context,
@@ -216,7 +216,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                                 ),
                                 IconButton(
                                   onPressed: () {
-                                    registrationController.pickedImage = null;
+                                    registrationController.pickedFile = null;
                                     setState(() {});
                                   },
                                   icon: Icon(Icons.cancel),
@@ -228,24 +228,29 @@ class _RegistrationPageState extends State<RegistrationPage> {
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 20),
-                  child: Container(
-                    width: MediaQuery.sizeOf(context).width * 0.8,
-                    height: 50,
-                    decoration: const BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [AppColors.primaryPink, AppColors.orange],
-                        begin: Alignment.centerLeft,
-                        end: Alignment.centerRight,
+                  child: InkWell(
+                    onTap: () async {
+                      await registrationController.register(context);
+                    },
+                    child: Container(
+                      width: MediaQuery.sizeOf(context).width * 0.8,
+                      height: 50,
+                      decoration: const BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [AppColors.primaryPink, AppColors.orange],
+                          begin: Alignment.centerLeft,
+                          end: Alignment.centerRight,
+                        ),
+                        borderRadius: BorderRadius.all(Radius.elliptical(8, 8)),
                       ),
-                      borderRadius: BorderRadius.all(Radius.elliptical(8, 8)),
-                    ),
-                    child: const Center(
-                      child: Text(
-                        "Sign Up",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18,
+                      child: const Center(
+                        child: Text(
+                          "Sign Up",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
+                          ),
                         ),
                       ),
                     ),
