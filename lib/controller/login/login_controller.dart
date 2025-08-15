@@ -6,24 +6,22 @@ import 'package:kindify_app/views/login/otp_screen.dart';
 
 class LoginController {
   TextEditingController emailController = TextEditingController();
-  String selectedRole= "Trust";
-
-
+  String selectedRole = "Trust";
 
   void toggleRole(String role) {
     selectedRole = role;
   }
 
   void _showSnack(BuildContext context, String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message)),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message)));
   }
 
   Future<void> register(BuildContext content) async {
     String email = emailController.text.trim();
-    debugPrint("Email:-${email}_Role:- ${selectedRole}");
-    if(email.isEmpty){
+    debugPrint("Email:-${email}_Role:- $selectedRole");
+    if (email.isEmpty) {
       _showSnack(content, "Please Enter the email!");
     }
 
