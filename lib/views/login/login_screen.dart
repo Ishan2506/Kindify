@@ -17,9 +17,13 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _upiConsent = false;
   bool _policy = false;
   final RegExp _emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+  //bool isLoading = false;
+  Future<void> _sendOtp() async {
+    //setState(() => isLoading = true); // Show loader
 
-  Future<void> regsiter (BuildContext content) async {
-    //String email= 
+    await _controller.register(context); // API call
+
+    //setState(() => isLoading = false); // Hide loader
   }
 
   Widget _buildSelectableCard(String title,IconData icon)
@@ -288,13 +292,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         return;
                       }
                       if (_emailRegex.hasMatch(email)) {
-                        _controller.register(context);
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => CustomOtpScreen(phoneNumber: email),
-                          ),
-                        );
+                        _sendOtp();
+                        
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(content: Text("Please enter a valid email address")),

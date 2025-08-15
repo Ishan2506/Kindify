@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:kindify_app/views/login/otp_screen.dart';
 
 class LoginController {
   TextEditingController emailController = TextEditingController();
@@ -19,7 +20,7 @@ class LoginController {
     );
   }
 
-  Future<bool> register(BuildContext content) async {
+  Future<void> register(BuildContext content) async {
     String email = emailController.text.trim();
     debugPrint("Email:-${email}_Role:- ${selectedRole}");
     if(email.isEmpty){
@@ -27,26 +28,37 @@ class LoginController {
     }
 
     try{
-      var response = await http.post(Uri.parse("https://kindify-backend.onrender.com/auth/register"),
+      var response = await http.post(Uri.parse("https://kindify-backend.onrender.com/auth/login"),
       headers: {"Content-Type": "application/json"},
       body: jsonEncode({
         "email": email,
-        "role": selectedRole,
       }),
       );
 
       if(response.statusCode==200){
-        debugPrint("Regsiter");
-        return true;
+        ScaffoldMessenger.of(content).showSnackBar(
+          const SnackBar(content: Text("OTP sent to your E-Mail Address")),
+        );
+        Navigator.push(content,MaterialPageRoute(
+            builder: (context) => CustomOtpScreen(email: email),
+          ),
+        );
+
+      }
+      else if(response.statusCode == 404){
+        ScaffoldMessenger.of(content).showSnackBar(
+          const SnackBar(content: Text("User not Found!")),
+        );
       }
       else{
-        debugPrint("${response.statusCode}__${response.body}");
-        return false;
+        ScaffoldMessenger.of(content).showSnackBar(
+          const SnackBar(content: Text("Failed to send otp!")),
+        );
       }
     }catch(e){
-      _showSnack(content, "Error: $e");
-      debugPrint("❌ Exception: $e");
-      return false;
+      ScaffoldMessenger.of(content).showSnackBar(
+        SnackBar(content: Text("Error ${e.toString()}")),
+      );
     }
   }
 

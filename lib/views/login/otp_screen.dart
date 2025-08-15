@@ -116,13 +116,16 @@
 // }
 
 
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
+import 'package:http/http.dart' as http;
 
 class CustomOtpScreen extends StatefulWidget {
-  final String phoneNumber;
+  final String email;
 
-  const CustomOtpScreen({Key? key, required this.phoneNumber})
+  const CustomOtpScreen({Key? key, required this.email})
       : super(key: key);
 
   @override
@@ -132,16 +135,46 @@ class CustomOtpScreen extends StatefulWidget {
 class _CustomOtpScreenState extends State<CustomOtpScreen> {
   String otpCode = "";
 
-  void _verifyOtp() {
-    if (otpCode.length == 4) {
-      print("Verifying OTP: $otpCode");
-      // Add your verification logic here
-    } else {
+  Future<void> _verify() async {
+    try{
+      if(otpCode.length ==6){
+          var response = await http.post(Uri.parse("https://kindify-backend.onrender.com/auth/verify-login"),
+              headers: {"Content-Type": "application/json"},
+              body: jsonEncode({
+                "email": widget.email,
+                "otp": otpCode
+              }),
+          );
+          debugPrint("response:- ${response.body}_${response.statusCode}");
+          if(response.statusCode == 200){
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text("Login Successfull")),
+            );
+          }
+          else if(response.statusCode == 404){
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text("User not Found!")),
+            );
+          }
+          else{
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text("${response.body}")),
+            );
+          }
+      }
+      else{
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Please enter a 6-digit OTP")),
+        );
+      }
+      
+    }catch(e){
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Please enter a 4-digit OTP")),
+          SnackBar(content: Text("Error ${e.toString()}")),
       );
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -187,7 +220,7 @@ class _CustomOtpScreenState extends State<CustomOtpScreen> {
                 SizedBox(height: 4),
 
                 Text(
-                  widget.phoneNumber,
+                  widget.email,
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
@@ -199,7 +232,7 @@ class _CustomOtpScreenState extends State<CustomOtpScreen> {
 
                 // OTP Text Field
                 OtpTextField(
-                  numberOfFields: 4,
+                  numberOfFields: 6,
                   borderColor: Colors.grey,
                   focusedBorderColor: Color(0xFFF26A4B),
                   showFieldAsBox: true,
@@ -217,7 +250,7 @@ class _CustomOtpScreenState extends State<CustomOtpScreen> {
 
                 // Gradient Verify Button
                 GestureDetector(
-                  onTap: _verifyOtp,
+                  onTap: _verify,
                   child: Container(
                     width: double.infinity,
                     padding: EdgeInsets.symmetric(vertical: 14),
