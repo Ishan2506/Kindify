@@ -125,8 +125,10 @@ import 'package:http/http.dart' as http;
 
 class CustomOtpScreen extends StatefulWidget {
   final String email;
+  
+  final String role;
 
-  const CustomOtpScreen({Key? key, required this.email})
+  const CustomOtpScreen({Key? key, required this.email,required this.role})
       : super(key: key);
 
   @override
@@ -135,6 +137,43 @@ class CustomOtpScreen extends StatefulWidget {
 
 class _CustomOtpScreenState extends State<CustomOtpScreen> {
   String otpCode = "";
+  int resendCount =0;
+  bool canResend= true;
+
+  void _showSnack(BuildContext context, String message) {
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message)));
+  }
+  Future<void> _resendOtp (BuildContext content) async {
+    if(!canResend) return;
+    try{
+      var response = await http.post(Uri.parse("https://kindify-backend.onrender.com/auth/login"),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({
+          "email": widget.email,
+          "role": widget.role
+        }),
+      );
+      final jsonRes = jsonDecode(response.body) as Map<String,dynamic>;
+      if(response.statusCode==200){
+        _showSnack(content,"OTP sent to your E-Mail Address");
+        setState(() {
+            resendCount++;
+            if (resendCount >= 3) {
+              canResend = false;
+            }
+        });
+
+      }
+      else{
+         _showSnack(content,"${jsonRes['message'] as String}");
+      }
+    }catch(e){
+       _showSnack(content,"Error ${e.toString()}");
+    }
+  }
+
 
   Future<void> _verify() async {
     try{
@@ -146,11 +185,13 @@ class _CustomOtpScreenState extends State<CustomOtpScreen> {
                 "otp": otpCode
               }),
           );
+          final jsonRes = jsonDecode(response.body) as Map<String,dynamic>;
           debugPrint("response:- ${response.body}_${response.statusCode}");
           if(response.statusCode == 200){
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text("Login Successfull")),
             );
+            
           }
           else if(response.statusCode == 404){
             ScaffoldMessenger.of(context).showSnackBar(
@@ -159,9 +200,14 @@ class _CustomOtpScreenState extends State<CustomOtpScreen> {
           }
           else{
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text("${response.body}")),
+              SnackBar(content: Text("${jsonRes['message'] as String}")),
             );
           }
+      }
+      else if(otpCode.isEmpty){
+        ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text("Please enter the OTP!")),
+            );
       }
       else{
         ScaffoldMessenger.of(context).showSnackBar(
@@ -279,18 +325,15 @@ class _CustomOtpScreenState extends State<CustomOtpScreen> {
                 Align(
                   alignment: Alignment.centerLeft,
                   child: GestureDetector(
-                    onTap: () {
-                      // TODO: Implement resend logic
-                      ScaffoldMessenger.of(
-                        context,
-                      ).showSnackBar(SnackBar(content: Text("OTP Resent")));
-                    },
+                    onTap: canResend 
+                    ? () => _resendOtp(context)
+                    : null,
                     child: Text(
                       "Resend",
                       style: TextStyle(
-                        decoration: TextDecoration.underline,
+                        decoration: canResend ? TextDecoration.underline : TextDecoration.none,
                         fontSize: 14,
-                        color: Colors.black87,
+                        color: Colors.black87.withValues(alpha: canResend ? 1.0 : 0.35),
                       ),
                     ),
                   ),

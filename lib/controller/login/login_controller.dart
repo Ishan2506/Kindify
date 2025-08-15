@@ -21,42 +21,32 @@ class LoginController {
   Future<void> register(BuildContext content) async {
     String email = emailController.text.trim();
     debugPrint("Email:-${email}_Role:- $selectedRole");
-    if (email.isEmpty) {
-      _showSnack(content, "Please Enter the email!");
-    }
 
     try{
       var response = await http.post(Uri.parse("https://kindify-backend.onrender.com/auth/login"),
-      headers: {"Content-Type": "application/json"},
-      body: jsonEncode({
-        "email": email,
-      }),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({
+          "email": email,
+          "role": selectedRole
+        }),
       );
-
+      final jsonRes = jsonDecode(response.body) as Map<String,dynamic>;
       if(response.statusCode==200){
-        ScaffoldMessenger.of(content).showSnackBar(
-          const SnackBar(content: Text("OTP sent to your E-Mail Address")),
-        );
+        _showSnack(content,"OTP sent to your E-Mail Address");
         Navigator.push(content,MaterialPageRoute(
-            builder: (context) => CustomOtpScreen(email: email),
+            builder: (context) => CustomOtpScreen(email: email,role: selectedRole,),
           ),
         );
 
       }
       else if(response.statusCode == 404){
-        ScaffoldMessenger.of(content).showSnackBar(
-          const SnackBar(content: Text("User not Found!")),
-        );
+        _showSnack(content,"User not Found!");
       }
       else{
-        ScaffoldMessenger.of(content).showSnackBar(
-          const SnackBar(content: Text("Failed to send otp!")),
-        );
+         _showSnack(content,"${jsonRes['message'] as String}");
       }
     }catch(e){
-      ScaffoldMessenger.of(content).showSnackBar(
-        SnackBar(content: Text("Error ${e.toString()}")),
-      );
+       _showSnack(content,"Error ${e.toString()}");
     }
   }
 

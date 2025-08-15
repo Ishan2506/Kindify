@@ -279,7 +279,12 @@ class _LoginScreenState extends State<LoginScreen> {
                   GestureDetector(
                     onTap: () {
                       String email = _controller.emailController.text.trim();
-                      if (!_policy || !_upiConsent) {
+                      if((!_policy || !_upiConsent) && email.isEmpty){
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text("Please Enter the email as well as check the term & condition boxes!")),
+                        );
+                      }
+                      else if (!_policy || !_upiConsent) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
                             content: Text(
@@ -289,22 +294,25 @@ class _LoginScreenState extends State<LoginScreen> {
                         );
                         return;
                       }
-                      if (email.isEmpty) {
+                      else if (email.isEmpty) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text("Please fill field!!")),
+                          const SnackBar(content: Text("Please Enter the email!")),
                         );
                         return;
                       }
-                      if (_emailRegex.hasMatch(email)) {
-                        _sendOtp();
+                      else{
+                        if (_emailRegex.hasMatch(email)) {
+                          _sendOtp();
                         
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text("Please enter a valid email address"),
-                          ),
-                        );
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text("Please enter a valid email address"),
+                            ),
+                          );
+                        }
                       }
+                      
                     },
                     child: loginBtn(),
                   ),
