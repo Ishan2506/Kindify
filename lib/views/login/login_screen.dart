@@ -67,7 +67,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFFFDF5F5),
       body: SingleChildScrollView(
-        child: Container(
+        child: SizedBox(
           height: MediaQuery.sizeOf(context).height,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -88,7 +88,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ],
               ),
               SizedBox(height: 15),
-              Container(
+              SizedBox(
                 width: 315,
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 15),
@@ -112,7 +112,7 @@ class _LoginScreenState extends State<LoginScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Container(
+                  SizedBox(
                     width: 325,
                     child: Row(
                       children: [
@@ -245,7 +245,7 @@ class _LoginScreenState extends State<LoginScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Container(
+                  SizedBox(
                     width: 325,
                     child: Row(
                       children: [

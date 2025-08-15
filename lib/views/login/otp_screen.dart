@@ -115,15 +115,13 @@
 //   }
 // }
 
-
 import 'package:flutter/material.dart';
 import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
 
 class CustomOtpScreen extends StatefulWidget {
   final String phoneNumber;
 
-  const CustomOtpScreen({Key? key, required this.phoneNumber})
-      : super(key: key);
+  const CustomOtpScreen({super.key, required this.phoneNumber});
 
   @override
   State<CustomOtpScreen> createState() => _CustomOtpScreenState();
@@ -137,9 +135,9 @@ class _CustomOtpScreenState extends State<CustomOtpScreen> {
       print("Verifying OTP: $otpCode");
       // Add your verification logic here
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Please enter a 4-digit OTP")),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Please enter a 4-digit OTP")));
     }
   }
 
@@ -178,10 +176,7 @@ class _CustomOtpScreenState extends State<CustomOtpScreen> {
                 // Subtitle
                 Text(
                   "Enter the OTP sent to",
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.black87,
-                  ),
+                  style: TextStyle(fontSize: 16, color: Colors.black87),
                 ),
 
                 SizedBox(height: 4),
@@ -250,9 +245,9 @@ class _CustomOtpScreenState extends State<CustomOtpScreen> {
                   child: GestureDetector(
                     onTap: () {
                       // TODO: Implement resend logic
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text("OTP Resent")),
-                      );
+                      ScaffoldMessenger.of(
+                        context,
+                      ).showSnackBar(SnackBar(content: Text("OTP Resent")));
                     },
                     child: Text(
                       "Resend",
@@ -272,4 +267,3 @@ class _CustomOtpScreenState extends State<CustomOtpScreen> {
     );
   }
 }
-
