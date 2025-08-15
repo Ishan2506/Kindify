@@ -115,12 +115,10 @@
 //   }
 // }
 
-<<<<<<< HEAD
+
 
 import 'dart:convert';
 
-=======
->>>>>>> e0013431d30c290e8b27a7a04c28c2e9891a1697
 import 'package:flutter/material.dart';
 import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
 import 'package:http/http.dart' as http;
@@ -128,12 +126,8 @@ import 'package:http/http.dart' as http;
 class CustomOtpScreen extends StatefulWidget {
   final String email;
 
-<<<<<<< HEAD
   const CustomOtpScreen({Key? key, required this.email})
       : super(key: key);
-=======
-  const CustomOtpScreen({super.key, required this.phoneNumber});
->>>>>>> e0013431d30c290e8b27a7a04c28c2e9891a1697
 
   @override
   State<CustomOtpScreen> createState() => _CustomOtpScreenState();
@@ -142,7 +136,6 @@ class CustomOtpScreen extends StatefulWidget {
 class _CustomOtpScreenState extends State<CustomOtpScreen> {
   String otpCode = "";
 
-<<<<<<< HEAD
   Future<void> _verify() async {
     try{
       if(otpCode.length ==6){
@@ -180,16 +173,6 @@ class _CustomOtpScreenState extends State<CustomOtpScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text("Error ${e.toString()}")),
       );
-=======
-  void _verifyOtp() {
-    if (otpCode.length == 4) {
-      print("Verifying OTP: $otpCode");
-      // Add your verification logic here
-    } else {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text("Please enter a 4-digit OTP")));
->>>>>>> e0013431d30c290e8b27a7a04c28c2e9891a1697
     }
   }
 
