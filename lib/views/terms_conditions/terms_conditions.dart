@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kindify_app/utils/colors.dart';
+import 'package:kindify_app/views/login/login_screen.dart';
 
 class TermsAndConditions extends StatefulWidget {
   const TermsAndConditions({super.key});
@@ -101,24 +102,34 @@ class _TermsAndConditionsState extends State<TermsAndConditions> {
             // Button
             Padding(
               padding: const EdgeInsets.only(top: 20, bottom: 20),
-              child: Container(
-                width: MediaQuery.sizeOf(context).width * 0.84,
-                height: 50,
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [Color(0xFFF56A79), Color(0xFFFCB248)],
-                    begin: Alignment.centerLeft,
-                    end: Alignment.centerRight,
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const LoginScreen(), // replace with your login widget
+                    ),
+                  );
+                },
+                child: Container(
+                  width: MediaQuery.sizeOf(context).width * 0.84,
+                  height: 50,
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [Color(0xFFF56A79), Color(0xFFFCB248)],
+                      begin: Alignment.centerLeft,
+                      end: Alignment.centerRight,
+                    ),
+                    borderRadius: BorderRadius.all(Radius.elliptical(8, 8)),
                   ),
-                  borderRadius: BorderRadius.all(Radius.elliptical(8, 8)),
-                ),
-                child: const Center(
-                  child: Text(
-                    "Proceed",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18,
+                  child: const Center(
+                    child: Text(
+                      "Proceed",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                      ),
                     ),
                   ),
                 ),

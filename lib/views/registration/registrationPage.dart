@@ -114,7 +114,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                                     ),
                                   ),
                                   Text(
-                                    "Supported file types : .jpg, .png, .jpeg",
+                                    "Supported file types : .jpg, .png, .jpeg, .pdf",
                                     style: TextStyle(
                                       color: Colors.black,
                                       fontWeight: FontWeight.w500,

@@ -2,9 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:kindify_app/utils/colors.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 
-class LoaderScreen extends StatelessWidget {
-  const LoaderScreen({super.key});
+class LoaderScreen extends StatefulWidget {
+  String txtDisplay;
+  LoaderScreen({super.key,required this.txtDisplay});
 
+  @override
+  State<LoaderScreen> createState() => _LoaderScreenState();
+}
+
+class _LoaderScreenState extends State<LoaderScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -27,7 +33,7 @@ class LoaderScreen extends StatelessWidget {
                 colors: [AppColors.orange, AppColors.primaryPink],
               ).createShader(Rect.fromLTWH(0, 0, bounds.width, bounds.height)),
               child: Text(
-                "Sending OTP to your email..",
+                widget.txtDisplay,
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 17,

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:kindify_app/utils/toast_service.dart';
 import 'package:path/path.dart' as path;
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
@@ -39,11 +40,6 @@ class RegistrationController {
     return "No file selected.";
   }
 
-  void _showSnack(BuildContext context, String message) {
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(message)));
-  }
 
   Future<void> register(BuildContext context) async{
     String TrustName = trustName.text.trim();
@@ -53,13 +49,13 @@ class RegistrationController {
     String DarpanId = darpanId.text.trim();
 
     if(TrustName.isEmpty && AdminName.isEmpty && MobileNo.isEmpty && Email.isEmpty && DarpanId.isEmpty){
-      _showSnack(context, "All the fields are required!");
+      ToastService.showError(context, "All the fields are required!");
     }
     else if(!_emailRegex.hasMatch(Email)){
-      _showSnack(context, "Please enter valid email address!");
+      ToastService.showError(context, "Please enter valid email address!");
     }
     else if(!mobileRegex.hasMatch(MobileNo)){
-      _showSnack(context, "Please enter valid phone number");
+      ToastService.showError(context, "Please enter valid phone number");
     }
     else{
       try{
@@ -77,7 +73,7 @@ class RegistrationController {
         final contentType = mimeTypes[ext];
 
         if(contentType == null){
-          _showSnack(context, "Unsupported file type!");
+          ToastService.showError(context, "Unsupported file type!");
         }
 
         request.fields['trustName'] = TrustName;
@@ -94,16 +90,16 @@ class RegistrationController {
         String json = await response.stream.bytesToString();
         var jsonRes = jsonDecode(json);
         if(response.statusCode == 200){
-          _showSnack(context, "${jsonRes["message"]}");
+          ToastService.showSuccess(context, "${jsonRes["message"]}");
         }
         else{
-          String body = await response.stream.bytesToString();
-          debugPrint("Error :- ${body}");
-          _showSnack(context, "else:- ${body}");
+          //String body = await response.stream.bytesToString();
+          //debugPrint("Error :- ${jsonRes["message"]}");
+          ToastService.showError(context, "${jsonRes["message"]}");
         }
 
       }catch(e){
-          debugPrint("Error:- ${e.toString()}");
+        ToastService.showError(context,"Error:- ${e.toString()}");
       }
     }
   }

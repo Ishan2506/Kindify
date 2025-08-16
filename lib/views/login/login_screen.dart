@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:kindify_app/controller/login/login_controller.dart';
 import 'package:kindify_app/utils/colors.dart';
 import 'package:kindify_app/utils/loader.dart';
+import 'package:kindify_app/utils/toast_service.dart';
 import 'package:kindify_app/views/login/otp_screen.dart';
 import 'package:kindify_app/views/registration/registrationPage.dart';
 import 'package:kindify_app/views/terms_conditions/terms_conditions.dart';
@@ -283,36 +284,21 @@ class _LoginScreenState extends State<LoginScreen> {
                         onTap: () {
                           String email = _controller.emailController.text.trim();
                           if((!_policy || !_upiConsent) && email.isEmpty){
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text("Please Enter the email as well as check the term & condition boxes!")),
-                            );
+                            ToastService.showError(context,"Please Enter the email as well as check the term & condition boxes!");
                           }
                           else if (!_policy || !_upiConsent) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text(
-                                  "Please agree to the Terms and give UPI consent.",
-                                ),
-                              ),
-                            );
-                            return;
+                            ToastService.showError(context,"Please agree to the Terms and give UPI consent.");
                           }
                           else if (email.isEmpty) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text("Please Enter the email!")),
-                            );
-                            return;
+                            ToastService.showError(context, "Please Enter the email!");
+                            
                           }
                           else{
                             if (_emailRegex.hasMatch(email)) {
                               _sendOtp();
                             
                             } else {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text("Please enter a valid email address"),
-                                ),
-                              );
+                              ToastService.showError(context, "Please enter a valid email address");
                             }
                           }
                           
@@ -364,8 +350,8 @@ class _LoginScreenState extends State<LoginScreen> {
           if(isLoading)
             Positioned.fill(child: Container(
               child: 
-              const Center(
-                child: LoaderScreen(),
+              Center(
+                child: LoaderScreen(txtDisplay: "Verifying your email..."),
               ),
               color: Colors.black.withValues(alpha: 0.4)
             ))
