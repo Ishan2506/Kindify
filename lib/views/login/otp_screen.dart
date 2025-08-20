@@ -124,6 +124,8 @@ import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
 import 'package:http/http.dart' as http;
 import 'package:kindify_app/utils/loader.dart';
 import 'package:kindify_app/utils/toast_service.dart';
+import 'package:kindify_app/utils/tokenHelper.dart';
+import 'package:kindify_app/views/Profile/ProfilePage.dart';
 
 class CustomOtpScreen extends StatefulWidget {
   final String email;
@@ -194,8 +196,13 @@ class _CustomOtpScreenState extends State<CustomOtpScreen> {
           final jsonRes = jsonDecode(response.body) as Map<String,dynamic>;
           debugPrint("response:- ${response.body}_${response.statusCode}");
           if(response.statusCode == 200){
-            ToastService.showSuccess(context, "Login Successfull");
-            
+            String jwtToken = jsonRes['token'] as String;
+            await addToken(value: jwtToken);
+            ToastService.showSuccess(context, "${jsonRes['message'] as String}");
+            Navigator.push(context,MaterialPageRoute(
+            builder: (context) => ProfilePage(),
+          ),
+        );
           }
           else if(response.statusCode == 404){
             ToastService.showError(context, "User not Found!");
