@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:kindify_app/controller/login/login_controller.dart';
 import 'package:kindify_app/utils/colors.dart';
 import 'package:kindify_app/utils/loader.dart';
-import 'package:kindify_app/utils/toast_service.dart';
+import 'package:kindify_app/services/toast_service.dart';
 import 'package:kindify_app/views/login/otp_screen.dart';
 import 'package:kindify_app/views/registration/registrationPage.dart';
 import 'package:kindify_app/views/terms_conditions/terms_conditions.dart';
@@ -24,7 +24,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Future<void> _sendOtp() async {
     setState(() => isLoading = true); // Show loader
 
-    await _controller.register(context); // API call
+    await _controller.login(context); // API call
 
     setState(() => isLoading = false); // Hide loader
   }

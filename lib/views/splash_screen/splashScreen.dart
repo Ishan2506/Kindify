@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:kindify_app/services/token_storage.dart';
+import 'package:kindify_app/views/home/home_screen.dart';
+import 'package:kindify_app/views/login/login_screen.dart';
 import '../../controller/splash_screen/splash_controller.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -48,10 +51,29 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
       _textController.forward();
     });
 
-    Future.delayed(const Duration(seconds: 6), () {
-      _controller.navigateToLogin(context);
-    });
+
+
+    Future<void> _checkAuthAndNavigate() async {
+    final token = await TokenStorageService.getToken();
+
+    if (token != null && token.isNotEmpty) {
+      debugPrint("Token:- ${token}");
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const HomeScreen()),
+      );
+    } else {
+      await TokenStorageService.clearToken();
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const LoginScreen()),
+      );
+    }
   }
+  Future.delayed(const Duration(seconds: 6), () async {
+      await _checkAuthAndNavigate();
+  });
+}
 
   @override
   void dispose() {

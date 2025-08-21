@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:kindify_app/utils/toast_service.dart';
-import 'package:kindify_app/utils/tokenHelper.dart';
+import 'package:kindify_app/services/toast_service.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});

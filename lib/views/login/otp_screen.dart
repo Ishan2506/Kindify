@@ -122,10 +122,11 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
 import 'package:http/http.dart' as http;
+import 'package:kindify_app/services/token_storage.dart';
 import 'package:kindify_app/utils/loader.dart';
-import 'package:kindify_app/utils/toast_service.dart';
-import 'package:kindify_app/utils/tokenHelper.dart';
+import 'package:kindify_app/services/toast_service.dart';
 import 'package:kindify_app/views/Profile/ProfilePage.dart';
+import 'package:kindify_app/views/home/home_screen.dart';
 
 class CustomOtpScreen extends StatefulWidget {
   final String email;
@@ -197,10 +198,10 @@ class _CustomOtpScreenState extends State<CustomOtpScreen> {
           debugPrint("response:- ${response.body}_${response.statusCode}");
           if(response.statusCode == 200){
             String jwtToken = jsonRes['token'] as String;
-            await addToken(value: jwtToken);
+            await TokenStorageService.saveToken(jwtToken);
             ToastService.showSuccess(context, "${jsonRes['message'] as String}");
             Navigator.push(context,MaterialPageRoute(
-            builder: (context) => ProfilePage(),
+            builder: (context) => HomeScreen(),
           ),
         );
           }

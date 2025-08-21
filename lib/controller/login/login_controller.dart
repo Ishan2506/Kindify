@@ -2,21 +2,21 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:kindify_app/utils/toast_service.dart';
+import 'package:kindify_app/services/toast_service.dart';
 import 'package:kindify_app/views/login/otp_screen.dart';
 import 'package:kindify_app/views/registration/registrationPage.dart';
 
 class LoginController {
   TextEditingController emailController = TextEditingController();
   String selectedRole = "Trust";
-
+  
   void toggleRole(String role) {
     selectedRole = role;
   }
 
 
 
-  Future<void> register(BuildContext content) async {
+  Future<void> login(BuildContext content) async {
     String email = emailController.text.trim();
     debugPrint("Email:-${email}_Role:- $selectedRole");
 
