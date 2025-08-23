@@ -127,6 +127,7 @@ import 'package:kindify_app/utils/loader.dart';
 import 'package:kindify_app/services/toast_service.dart';
 import 'package:kindify_app/views/Profile/ProfilePage.dart';
 import 'package:kindify_app/views/home/home_screen.dart';
+import 'package:kindify_app/views/home/home_screens.dart';
 
 class CustomOtpScreen extends StatefulWidget {
   final String email;
@@ -200,10 +201,11 @@ class _CustomOtpScreenState extends State<CustomOtpScreen> {
             String jwtToken = jsonRes['token'] as String;
             await TokenStorageService.saveToken(jwtToken);
             ToastService.showSuccess(context, "${jsonRes['message'] as String}");
-            Navigator.push(context,MaterialPageRoute(
-            builder: (context) => HomeScreen(),
-          ),
-        );
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => HomeScreens()),
+              (Route<dynamic> route) => false,
+            );
           }
           else if(response.statusCode == 404){
             ToastService.showError(context, "User not Found!");

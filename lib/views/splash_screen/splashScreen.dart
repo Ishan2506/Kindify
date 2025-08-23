@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kindify_app/services/token_storage.dart';
 import 'package:kindify_app/views/home/home_screen.dart';
+import 'package:kindify_app/views/home/home_screens.dart';
 import 'package:kindify_app/views/login/login_screen.dart';
 import '../../controller/splash_screen/splash_controller.dart';
 
@@ -60,7 +61,7 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
       debugPrint("Token:- ${token}");
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => const HomeScreen()),
+        MaterialPageRoute(builder: (_) => HomeScreens()),
       );
     } else {
       await TokenStorageService.clearToken();

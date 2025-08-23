@@ -15,11 +15,11 @@ class Post {
 
   factory Post.fromJson(Map<String, dynamic> json) {
     return Post(
-      id: json["_id"] as String,
+      id: json["_id"] ?? "",
       name: json["name"] ?? "",
       location: json["location"] ?? "",
       picture: json["picture"] ?? "",
-      likedBy: (json["likedBy"] as List<dynamic>).map((e) => e.toString()).toList(),
+      likedBy: List<String>.from(json["likedBy"] ?? []),
     );
   }
 }

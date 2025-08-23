@@ -37,7 +37,7 @@ class _ProfileScreenWithTabsState extends State<ProfileScreenWithTabs> with Sing
       begin: Alignment.topLeft,
       end: Alignment.bottomRight,
     );
-
+    
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
