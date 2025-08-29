@@ -1,3 +1,5 @@
+// lib/models/post.dart
+
 class Post {
   final String id;
   final String name;
@@ -15,11 +17,11 @@ class Post {
 
   factory Post.fromJson(Map<String, dynamic> json) {
     return Post(
-      id: json["_id"] ?? "",
-      name: json["name"] ?? "",
-      location: json["location"] ?? "",
-      picture: json["picture"] ?? "",
-      likedBy: List<String>.from(json["likedBy"] ?? []),
+      id: json['_id'],
+      name: json['name'],
+      location: json['location'],
+      picture: json['picture'],
+      likedBy: List<String>.from(json['likedBy']),
     );
   }
 }
