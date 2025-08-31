@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:kindify_app/services/token_storage.dart';
 import 'package:kindify_app/utils/colors.dart';
 import 'package:kindify_app/views/Profile/profile.dart';
+import 'package:kindify_app/views/home_drawer/contactwithus_page.dart';
+import 'package:kindify_app/views/home_drawer/join_volunteer_screen.dart';
 import 'package:kindify_app/views/login/login_screen.dart';
 
 class CustomDrawer extends StatefulWidget {
@@ -199,14 +201,24 @@ class _CustomDrawerState extends State<CustomDrawer> {
             leading: Icon(Icons.message),
             title: Text("Connect with Us"),
             onTap: () {
-              print("Connect with Us clicked");
+              Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>  ContactWithUsPage(), // replace with your login widget
+                    ),
+              );
             },
           ),
           ListTile(
             leading: Icon(Icons.group_add),
             title: Text("Join as a Volunteer"),
             onTap: () {
-              print("Join as a Volunteer clicked");
+              Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>  JoinVolunteerScreen(), // replace with your login widget
+                    ),
+              );
             },
           ),
           ListTile(

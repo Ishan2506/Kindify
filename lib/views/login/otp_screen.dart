@@ -126,7 +126,6 @@ import 'package:kindify_app/services/token_storage.dart';
 import 'package:kindify_app/utils/loader.dart';
 import 'package:kindify_app/services/toast_service.dart';
 import 'package:kindify_app/views/Profile/ProfilePage.dart';
-import 'package:kindify_app/views/home/home_screen.dart';
 import 'package:kindify_app/views/home/home_screens.dart';
 
 class CustomOtpScreen extends StatefulWidget {

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kindify_app/utils/colors.dart';
 import 'package:kindify_app/views/login/login_screen.dart';
+import 'package:kindify_app/widgets/custom_app_bar.dart';
 
 class TermsAndConditions extends StatefulWidget {
   const TermsAndConditions({super.key});
@@ -18,50 +19,7 @@ class _TermsAndConditionsState extends State<TermsAndConditions> {
         child: Column(
           children: [
             // Title
-            Padding(
-              padding: const EdgeInsets.only(left: 16, top: 10, bottom: 20),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Row(
-                  children: [
-                    IconButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                        setState(() {});
-                      },
-                      icon: Icon(
-                        Icons.arrow_back,
-                        shadows: [
-                          Shadow(
-                            offset: Offset(0.5, 0.5),
-                            color: Colors.black,
-                            blurRadius: 1,
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    SizedBox(width: MediaQuery.sizeOf(context).width * 0.01),
-                    ShaderMask(
-                      shaderCallback: (bounds) =>
-                          const LinearGradient(
-                            colors: [AppColors.orange, AppColors.primaryPink],
-                          ).createShader(
-                            Rect.fromLTWH(0, 0, bounds.width, bounds.height),
-                          ),
-                      child: const Text(
-                        "Terms & Conditions",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 22,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+            const CustomAppBar(title: "Terms & Conditions"),
 
             // Scrollable content with fixed height
             SizedBox(
