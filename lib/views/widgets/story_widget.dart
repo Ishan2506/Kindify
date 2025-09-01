@@ -1,7 +1,8 @@
+
 import 'package:flutter/material.dart';
 import 'package:kindify_app/model/story.dart';
 import 'package:kindify_app/utils/colors.dart';
-
+import 'package:kindify_app/views/home/story_viewer_screen.dart';
 class StorySection extends StatelessWidget {
   final List<Story> stories;
 
@@ -9,23 +10,32 @@ class StorySection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 130,
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        itemCount: stories.length + 1,
-        itemBuilder: (context, index) {
-          if (index == 0) {
-            return _buildAddStoryCircle();
-          } else {
-            final story = stories[index - 1];
-            return _buildStoryCircle(story);
-          }
-        },
-      ),
-    );
-  }
+  return SizedBox(
+    height: 130,
+    child: ListView.builder(
+      scrollDirection: Axis.horizontal,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      itemCount: stories.length, // Remove the +1 since we're not adding the "Add Story" circle
+      itemBuilder: (context, index) {
+        final story = stories[index];
+        return GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => StoryViewScreen(
+                  stories: stories,
+                  initialIndex: index, // Use the current index directly
+                ),
+              ),
+            );
+          },
+          child: _buildStoryCircle(story),
+        );
+      },
+    ),
+  );
+}
 
   Widget _buildAddStoryCircle() {
     return Container(
@@ -63,149 +73,118 @@ class StorySection extends StatelessWidget {
     );
   }
 
-//   Widget _buildStoryCircle(Story story) {
-//     return Container(
-//       margin: const EdgeInsets.only(right: 16),
-//       child: Column(
-//         children: [
-//           // Story Circle with gradient border and image
-//           Container(
-//             width: 250,
-//             height: 90,
-//             decoration: BoxDecoration(
-//               shape: BoxShape.rectangle,
-//               gradient: const LinearGradient(
-//                 colors: [AppColors.primaryPink, AppColors.orange],
-//                 begin: Alignment.topLeft,
-//                 end: Alignment.bottomRight,
-//               ),
-//               boxShadow: [
-//                 BoxShadow(
-//                   color: Colors.black.withOpacity(0.15),
-//                   blurRadius: 8,
-//                   offset: const Offset(0, 4),
-//                 ),
-//               ],
-//             ),
-//             child: Padding(
-//               padding: const EdgeInsets.all(3.0),
-//               child: Container(
-//                 child: Row(
-//                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//                   children: [
-//                     Container(
-//                       decoration: BoxDecoration(
-//                         shape: BoxShape.circle,
-//                         border: Border.all(color: Colors.white, width: 120),
-//                         image: DecorationImage(
-//                           image: NetworkImage(story.imageUrl),
-//                           fit: BoxFit.cover,
-//                         ),
-//                       ),
-//                     ),
+  Widget _buildStoryCircle(Story story) {
+    // Construct the full image URL
+    String fullImageUrl = story.imageUrl.startsWith('http')
+        ? story.imageUrl
+        : 'https://kindify-backend.onrender.com${story.imageUrl}';
 
-//                     Column(
-//                       children: [
-//                         Text(
-//                           story.title,
-//                           style: const TextStyle(
-//                             fontSize: 12,
-//                             fontWeight: FontWeight.w600,
-//                             color: Colors.black87,
-//                             height: 1.2,
-//                           ),
-//                           maxLines: 2,
-//                           overflow: TextOverflow.ellipsis,
-//                           textAlign: TextAlign.center,
-//                         ),
-//                       ],
-//                     ),
-//                   ],
-//                 ),
-//               ),
-//             ),
-//           ),
-
-//           // SizedBox(
-//           //   width: 80,
-//           //   child: Text(
-//           //     story.title,
-//           //     style: const TextStyle(
-//           //       fontSize: 12,
-//           //       fontWeight: FontWeight.w600,
-//           //       color: Colors.black87,
-//           //       height: 1.2,
-//           //     ),
-//           //     maxLines: 2,
-//           //     overflow: TextOverflow.ellipsis,
-//           //     textAlign: TextAlign.center,
-//           //   ),
-//           // ),
-//         ],
-//       ),
-//     );
-//   }
-
-Widget _buildStoryCircle(Story story) {
-  return Container(
-    margin: const EdgeInsets.only(right: 16),
-    width: 250,
-    height: 90,
-    decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(16),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black.withOpacity(0.1),
-          blurRadius: 6,
-          offset: const Offset(0, 3),
-        ),
-      ],
-    ),
-    child: Row(
-      children: [
-        // Circular image
-        Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: CircleAvatar(
-            radius: 28,
-            backgroundImage: NetworkImage(story.imageUrl),
+    return Container(
+      margin: const EdgeInsets.only(right: 16),
+      width: 250,
+      height: 90,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 6,
+            offset: const Offset(0, 3),
           ),
-        ),
-
-        const SizedBox(width: 10),
-
-        // Title + Location
-        Expanded(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                story.title,
-                style: const TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.black87,
+        ],
+      ),
+      child: Row(
+        children: [
+          // Circular image with error handling
+          Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Container(
+              width: 56,
+              height: 56,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: story.isUserStory ? AppColors.primaryPink : Colors.grey,
+                  width: 2,
                 ),
-                overflow: TextOverflow.ellipsis,
               ),
-              const SizedBox(height: 4),
-              Text(
-                story.location,
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey[600],
+              child: ClipOval(
+                child: Image.network(
+                  fullImageUrl,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Container(
+                      color: Colors.grey[300],
+                      child: Icon(
+                        Icons.error_outline,
+                        color: Colors.grey,
+                        size: 24,
+                      ),
+                    );
+                  },
+                  loadingBuilder: (context, child, loadingProgress) {
+                    if (loadingProgress == null) return child;
+                    return Center(
+                      child: CircularProgressIndicator(
+                        value: loadingProgress.expectedTotalBytes != null
+                            ? loadingProgress.cumulativeBytesLoaded /
+                                loadingProgress.expectedTotalBytes!
+                            : null,
+                      ),
+                    );
+                  },
                 ),
-                overflow: TextOverflow.ellipsis,
               ),
-            ],
+            ),
           ),
-        ),
-      ],
-    ),
-  );
-}
 
+          const SizedBox(width: 10),
 
+          // Title + Location
+          Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  story.title,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black87,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  story.location,
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey[600],
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                ),
+                if (story.username != null) ...[
+                  const SizedBox(height: 4),
+                  Text(
+                    'By ${story.username}',
+                    style: TextStyle(
+                      fontSize: 11,
+                      color: Colors.grey[500],
+                      fontStyle: FontStyle.italic,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }

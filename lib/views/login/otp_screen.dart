@@ -1,121 +1,3 @@
-// import 'package:flutter/material.dart';
-// import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
-// import 'package:fluttertoast/fluttertoast.dart';
-// import 'package:http/http.dart' as http;
-
-// class OtpVerificationScreen extends StatefulWidget {
-//   final String phoneNumber;
-
-//   const OtpVerificationScreen({Key? key, required this.phoneNumber})
-//       : super(key: key);
-
-//   @override
-//   State<OtpVerificationScreen> createState() => _OtpVerificationScreenState();
-// }
-
-// class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
-//   String sessionId = ''; // Will be used with 2Factor API
-//   String enteredOtp = '';
-
-//   @override
-//   void initState() {
-//     super.initState();
-//     sendOtp(); // Auto send OTP on screen load
-//   }
-
-//   Future<void> sendOtp() async {
-//     // TODO: Replace with your 2Factor API Key and template ID
-//     const apiKey = "YOUR_API_KEY";
-//     final phone = widget.phoneNumber;
-
-//     final url =
-//         'https://2factor.in/API/V1/$apiKey/SMS/$phone/AUTOGEN'; // AUTOGEN uses your approved template
-
-//     final response = await http.get(Uri.parse(url));
-
-//     if (response.statusCode == 200) {
-//       final responseBody = response.body;
-//       print("OTP Sent: $responseBody");
-
-//       final sid = RegExp(r'"Details":"(.+?)"').firstMatch(responseBody)?.group(1);
-//       if (sid != null) {
-//         setState(() => sessionId = sid);
-//         Fluttertoast.showToast(msg: "OTP sent to $phone");
-//       }
-//     } else {
-//       Fluttertoast.showToast(msg: "Failed to send OTP");
-//     }
-//   }
-
-//   Future<void> verifyOtp() async {
-//     if (enteredOtp.length != 6 || sessionId.isEmpty) {
-//       Fluttertoast.showToast(msg: "Enter complete OTP");
-//       return;
-//     }
-
-//     final verifyUrl =
-//         'https://2factor.in/API/V1/YOUR_API_KEY/SMS/VERIFY/$sessionId/$enteredOtp';
-
-//     final response = await http.get(Uri.parse(verifyUrl));
-
-//     if (response.statusCode == 200) {
-//       final body = response.body;
-//       print("OTP Verify: $body");
-
-//       if (body.contains('"Status":"Success"')) {
-//         Fluttertoast.showToast(msg: "OTP Verified ✅");
-//         // TODO: Navigate to home/dashboard
-//       } else {
-//         Fluttertoast.showToast(msg: "OTP Verification Failed ❌");
-//       }
-//     } else {
-//       Fluttertoast.showToast(msg: "Error verifying OTP");
-//     }
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: const Text("OTP Verification"),
-//       ),
-//       body: Padding(
-//         padding: const EdgeInsets.all(24.0),
-//         child: Column(
-//           children: [
-//             Text(
-//               "Enter the OTP sent to ${widget.phoneNumber}",
-//               style: const TextStyle(fontSize: 18),
-//               textAlign: TextAlign.center,
-//             ),
-//             const SizedBox(height: 24),
-//             OtpTextField(
-//               numberOfFields: 6,
-//               borderColor: const Color(0xFF512DA8),
-//               showFieldAsBox: true,
-//               onCodeChanged: (String code) {},
-//               onSubmit: (String otp) {
-//                 setState(() => enteredOtp = otp);
-//               },
-//             ),
-//             const SizedBox(height: 24),
-//             ElevatedButton(
-//               onPressed: verifyOtp,
-//               child: const Text("Verify OTP"),
-//             ),
-//             const SizedBox(height: 16),
-//             TextButton(
-//               onPressed: sendOtp,
-//               child: const Text("Resend OTP"),
-//             )
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }
-
-
 
 import 'dart:convert';
 
@@ -171,7 +53,7 @@ class _CustomOtpScreenState extends State<CustomOtpScreen> {
 
       }
       else{
-        ToastService.showError(content,"${jsonRes['message'] as String}");
+        ToastService.showError(content,jsonRes['message'] as String);
          
       }
     }catch(e){
@@ -200,7 +82,8 @@ class _CustomOtpScreenState extends State<CustomOtpScreen> {
           if(response.statusCode == 200){
             String jwtToken = jsonRes['token'] as String;
             await TokenStorageService.saveToken(jwtToken);
-            ToastService.showSuccess(context, "${jsonRes['message'] as String}");
+            
+            ToastService.showSuccess(context, jsonRes['message'] as String);
             Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(builder: (context) => HomeScreens()),
@@ -211,7 +94,7 @@ class _CustomOtpScreenState extends State<CustomOtpScreen> {
             ToastService.showError(context, "User not Found!");
           }
           else{
-            ToastService.showError(context, "${jsonRes['message'] as String}");
+            ToastService.showError(context, jsonRes['message'] as String);
           }
       }
       else if(otpCode.isEmpty){
@@ -286,7 +169,7 @@ class _CustomOtpScreenState extends State<CustomOtpScreen> {
                     focusedBorderColor: Color(0xFFF26A4B),
                     showFieldAsBox: true,
                     borderRadius: BorderRadius.circular(12),
-                    fieldWidth: 55,
+                    fieldWidth: MediaQuery.of(context).size.width / 8,
                     onCodeChanged: (String code) {},
                     onSubmit: (String code) {
                       setState(() {
@@ -294,9 +177,7 @@ class _CustomOtpScreenState extends State<CustomOtpScreen> {
                       });
                     },
                   ),
-          
                   SizedBox(height: 30),
-          
                   // Gradient Verify Button
                   GestureDetector(
                     onTap: _verify,
@@ -353,11 +234,11 @@ class _CustomOtpScreenState extends State<CustomOtpScreen> {
           ),
           if(isLoading)
             Positioned.fill(child: Container(
+              color: Colors.black.withValues(alpha: 0.4),
               child: 
               Center(
                 child: LoaderScreen(txtDisplay: "Resending the OTP..."),
-              ),
-              color: Colors.black.withValues(alpha: 0.4)
+              )
             ))
           ],
         ),
