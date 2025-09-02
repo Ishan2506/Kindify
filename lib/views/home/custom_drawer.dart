@@ -5,6 +5,7 @@ import 'package:kindify_app/views/Profile/profile.dart';
 import 'package:kindify_app/views/home_drawer/contactwithus_page.dart';
 import 'package:kindify_app/views/home_drawer/join_volunteer_screen.dart';
 import 'package:kindify_app/views/login/login_screen.dart';
+import 'package:share_plus/share_plus.dart';
 
 class CustomDrawer extends StatefulWidget {
   @override
@@ -131,6 +132,14 @@ void _showLogoutDialog(BuildContext context) {
   );
 }
 
+void _shareApp(){
+  const appLink = "https://play.google.com/store/apps/details?id=com.pubg.imobile";
+
+  Share.share("Check out this amazing app Kindify! Download here: $appLink",
+      subject: "Kindify App",);
+}
+
+
 class _CustomDrawerState extends State<CustomDrawer> {
   @override
   Widget build(BuildContext context) {
@@ -233,6 +242,14 @@ class _CustomDrawerState extends State<CustomDrawer> {
             title: Text("Help & Support"),
             onTap: () {
               print("Help & Support clicked");
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.share),
+            title: Text("Share App"),
+            onTap: () {
+              Navigator.pop(context);
+              _shareApp();
             },
           ),
           Spacer(),

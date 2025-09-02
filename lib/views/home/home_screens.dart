@@ -24,6 +24,7 @@ class _HomeScreensState extends State<HomeScreens> {
   late Future<List<Post>> futurePosts;
   late Future<List<Story>> futureStories;
   
+  
   @override
   void initState() {
     super.initState();
@@ -303,41 +304,51 @@ class _HomeScreensState extends State<HomeScreens> {
                       children: List.generate(itemCount, (i) {
                         final isActive = _selectedIndex == i;
                         return Expanded(
-                          child: InkWell(
-                            splashFactory: NoSplash.splashFactory,
-                            highlightColor: Colors.transparent,
-                            onTap: () async {
-                              setState(() => _selectedIndex = i);
+                          child: Tooltip(
+                            message: _barItems[i].label, 
+                            waitDuration: const Duration(milliseconds: 400), 
+                            showDuration: const Duration(seconds: 2),
+                            decoration: BoxDecoration(
+                              color: Colors.black87,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            textStyle: const TextStyle(color: Colors.white, fontSize: 14),
+                            child: InkWell(
+                              splashFactory: NoSplash.splashFactory,
+                              highlightColor: Colors.transparent,
+                              onTap: () async {
+                                setState(() => _selectedIndex = i);
 
-                              // Your existing action (example: clear token on Profile)
-                              if (i == 3) {
-                                Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) =>  CategoryPage(), // replace with your login widget
-                                      ),
-                                );
-                              }
-                            },
-                            child: Padding(
-                              padding: const EdgeInsets.only(top: 18.0),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Opacity(
-                                    opacity: isActive ? 0.0 : 1.0,
-                                    child: Icon(
-                                      _barItems[i].icon,
-                                      size: 26,
-                                      color: Colors.white.withOpacity(0.85),
+                                if (i == 1) {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => CategoryPage(),
                                     ),
-                                  ),
-                                ],
+                                  );
+                                }
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.only(top: 18.0),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Opacity(
+                                      opacity: isActive ? 0.0 : 1.0,
+                                      child: Icon(
+                                        _barItems[i].icon,
+                                        size: 26,
+                                        color: Colors.white.withOpacity(0.85),
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           ),
                         );
                       }),
+
                     ),
                   ),
                 ],
@@ -358,7 +369,7 @@ class _BarItem {
 
 final List<_BarItem> _barItems = const [
   _BarItem(Icons.home, "Home"),
-  _BarItem(Icons.payment, "Donate"),
+  _BarItem(Icons.category, "Category"),
+  _BarItem(Icons.payment, "Transaction"),
   _BarItem(Icons.person, "Profile"),
-  _BarItem(Icons.menu, "Menu"),
 ];

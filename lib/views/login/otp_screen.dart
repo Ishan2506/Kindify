@@ -1,4 +1,5 @@
 
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -7,8 +8,6 @@ import 'package:http/http.dart' as http;
 import 'package:kindify_app/services/token_storage.dart';
 import 'package:kindify_app/utils/loader.dart';
 import 'package:kindify_app/services/toast_service.dart';
-// import 'package:kindify_app/views/Profile/ProfilePage.dart';
-// import 'package:kindify_app/views/home/home_screen.dart';
 import 'package:kindify_app/views/home/home_screens.dart';
 
 class CustomOtpScreen extends StatefulWidget {
@@ -28,6 +27,30 @@ class _CustomOtpScreenState extends State<CustomOtpScreen> {
   int resendCount =0;
   bool canResend= true;
   bool isLoading = false;
+  int countdown = 0;
+  Timer? _timer;
+
+    void startTimer() {
+    setState(() {
+      countdown = 60;
+      canResend = false;
+    });
+
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (countdown == 0) {
+        timer.cancel();
+        setState(() {
+          if (resendCount < 3) {
+            canResend = true; 
+          }
+        });
+      } else {
+        setState(() {
+          countdown--;
+        });
+      }
+    });
+  }
   Future<void> _resendOtp (BuildContext content) async {
     if(!canResend) return;
     setState(() {
@@ -46,7 +69,9 @@ class _CustomOtpScreenState extends State<CustomOtpScreen> {
         ToastService.showSuccess(content,"OTP sent to your E-Mail Address");
         setState(() {
             resendCount++;
-            if (resendCount >= 3) {
+            if (resendCount < 3) {
+            startTimer();
+            } else {
               canResend = false;
             }
         });
@@ -109,6 +134,11 @@ class _CustomOtpScreenState extends State<CustomOtpScreen> {
     }
   }
 
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -213,21 +243,36 @@ class _CustomOtpScreenState extends State<CustomOtpScreen> {
                       Align(
                         alignment: Alignment.centerRight,
                         child: GestureDetector(
-                          onTap: canResend && !isLoading
-                          ? () => _resendOtp(context)
-                          : null,
-                          child: Text(
-                            "Resend",
-                            style: TextStyle(
-                              decoration: canResend ? TextDecoration.underline : TextDecoration.none,
-                              fontSize: 17,
-                              color: Colors.black87.withValues(alpha: canResend ? 1.0 : 0.35),
-                            ),
+                          onTap: canResend && !isLoading ? () => _resendOtp(context) : null,
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                "Resend",
+                                style: TextStyle(
+                                  decoration: canResend ? TextDecoration.underline : TextDecoration.none,
+                                  fontSize: 17,
+                                  color: Colors.black87.withValues(alpha: canResend ? 1.0 : 0.35),
+                                ),
+                              ),
+                              if (!canResend && countdown > 0) ...[
+                                const SizedBox(width: 6),
+                                Text(
+                                  "(${countdown}s)",
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.redAccent,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ],
+                            ],
                           ),
                         ),
                       ),
                     ],
-                  ),
+                  )
+
                 ],
               ),
             ),
