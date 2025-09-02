@@ -4,6 +4,7 @@ import 'package:kindify_app/model/post.dart';
 import 'package:kindify_app/model/story.dart';
 import 'package:kindify_app/services/token_storage.dart';
 import 'package:kindify_app/utils/colors.dart';
+import 'package:kindify_app/views/category/categoryPage.dart';
 import 'package:kindify_app/views/home/custom_drawer.dart';
 import 'package:kindify_app/views/home/donation_card.dart';
 import 'package:kindify_app/views/widgets/story_widget.dart';
@@ -267,9 +268,13 @@ Widget build(BuildContext context) {
                               setState(() => _selectedIndex = i);
 
                               // Your existing action (example: clear token on Profile)
-                              if (i == 2) {
-                                await TokenStorageService.clearToken();
-                                debugPrint("Profile tapped → token cleared");
+                              if (i == 3) {
+                                Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>  CategoryPage(), // replace with your login widget
+                                      ),
+                                );
                               }
                             },
                             child: Padding(
