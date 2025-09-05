@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kindify_app/utils/colors.dart';
 
 class FoodDistributionPage extends StatefulWidget {
   @override
@@ -16,6 +17,24 @@ class _FoodDistributionPageState extends State<FoodDistributionPage> {
     final screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
+      appBar: AppBar(
+        leading: InkWell(
+          onTap: () {
+            Navigator.pop(context);
+          },
+          child: Icon(Icons.arrow_back, color: Colors.white),
+        ),
+        title: Text("Food Distribution", style: TextStyle(color: Colors.white)),
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [AppColors.primaryPink, AppColors.orange],
+              begin: Alignment.centerLeft,
+              end: Alignment.centerRight,
+            ),
+          ),
+        ),
+      ),
       body: SafeArea(
         child: Container(
           width: screenWidth,
@@ -23,39 +42,26 @@ class _FoodDistributionPageState extends State<FoodDistributionPage> {
           child: Column(
             children: [
               /// Top Gradient Bar
-              Container(
-                width: screenWidth,
-                padding: EdgeInsets.symmetric(
-                    horizontal: screenWidth * 0.04, vertical: screenHeight * 0.02),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [Colors.orange, Colors.deepOrangeAccent],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  // borderRadius: BorderRadius.only(
-                  //   bottomLeft: Radius.circular(screenWidth * 0.04),
-                  //   bottomRight: Radius.circular(screenWidth * 0.04),
-                  // ),
-                ),
-                child: Row(
-                  children: [
-                    SizedBox(width: screenWidth * 0.03),
-                    GestureDetector(
-                      onTap: () => Navigator.pop(context),
-                      child: Icon(Icons.arrow_back_ios, color: Colors.white, size: screenWidth * 0.06),
-                    ),
-                    Text(
-                      "Food Distribution",
-                      style: TextStyle(
-                        fontSize: screenWidth * 0.05,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              // Container(
+              //   padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
+              //   decoration: const BoxDecoration(
+              //     gradient: LinearGradient(
+              //       colors: [AppColors.primaryPink, AppColors.orange],
+              //     ),
+              //   ),
+              //   child: ListTile(
+              //     leading: const Icon(Icons.arrow_back, color: Colors.white),
+              //     title: const Text(
+              //       "Food Distribution",
+              //       style: TextStyle(
+              //         color: Colors.white,
+              //         fontSize: 18,
+              //         fontWeight: FontWeight.bold,
+              //       ),
+              //     ),
+              //     onTap: () => Navigator.pop(context),
+              //   ),
+              // ),
 
               /// Main Body
               Expanded(

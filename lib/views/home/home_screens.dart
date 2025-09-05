@@ -21,12 +21,16 @@ class _HomeScreensState extends State<HomeScreens> {
     "https://picsum.photos/402/200",
   ];
   int _selectedIndex = 0;
-
   late Future<List<Post>> futurePosts;
   late Future<List<Story>> futureStories;
   final List<Widget> _pages =  [
     PostScreen(),
     CategoryPage(),
+    
+    // Padding(
+    //   padding: EdgeInsets.only(top: kToolbarHeight + 8.0),
+    //   child: CategoryPage(),
+    // ),
   ];
   
   @override
@@ -45,6 +49,7 @@ class _HomeScreensState extends State<HomeScreens> {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       drawer: CustomDrawer(),
       appBar: AppBar(
@@ -92,11 +97,11 @@ class _HomeScreensState extends State<HomeScreens> {
           ),
         ],
       ),
-
+      
       body: IndexedStack(
-        index: _selectedIndex,
-        children: _pages,
-      ),
+          index: _selectedIndex,
+          children: _pages,
+        ),
 
       bottomNavigationBar: SafeArea(
         child: SizedBox(
