@@ -1,4 +1,6 @@
+// donation_card.dart
 import 'package:flutter/material.dart';
+import 'package:kindify_app/views/home/donateNow.dart';// Correct import
 
 class DonationCard extends StatelessWidget {
   final String title;
@@ -83,7 +85,10 @@ class DonationCard extends StatelessWidget {
               const Icon(Icons.send),
               const Spacer(),
               ElevatedButton(
-                onPressed: () {},
+                onPressed: () => Navigator.push(
+                  context, 
+                  MaterialPageRoute(builder: (context) => DonateNowPage()),
+                ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.orangeAccent,
                   shape: RoundedRectangleBorder(
@@ -103,3 +108,4 @@ class DonationCard extends StatelessWidget {
     );
   }
 }
+// REMOVE the DonateNowPage class from this file
