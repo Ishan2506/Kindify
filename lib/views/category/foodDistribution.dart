@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kindify_app/utils/colors.dart';
 import 'package:kindify_app/views/category/categoryPage.dart';
+import 'package:kindify_app/views/category/fooddistributionprice.dart';
 
 class FoodDistribution extends StatefulWidget {
   const FoodDistribution({super.key});
@@ -45,7 +46,7 @@ class _FoodDistributionState extends State<FoodDistribution> {
                       _trustInfoCards(
                         () {
                           Navigator.push(context, MaterialPageRoute(builder: (context) {
-                            return CategoryPage();
+                            return FoodDistributionPage();
                           },));
                         },
                         "Food Distribution Trust Name",
