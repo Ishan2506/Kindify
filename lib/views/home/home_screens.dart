@@ -8,6 +8,7 @@ import 'package:kindify_app/utils/colors.dart';
 import 'package:kindify_app/views/category/categoryPage.dart';
 import 'package:kindify_app/views/home/custom_drawer.dart';
 import 'package:kindify_app/views/home/donation_card.dart';
+import 'package:kindify_app/views/home/post_screen.dart';
 import 'package:kindify_app/views/widgets/story_widget.dart';
 
 class HomeScreens extends StatefulWidget {
@@ -23,7 +24,10 @@ class _HomeScreensState extends State<HomeScreens> {
 
   late Future<List<Post>> futurePosts;
   late Future<List<Story>> futureStories;
-  
+  final List<Widget> _pages =  [
+    PostScreen(),
+    CategoryPage(),
+  ];
   
   @override
   void initState() {
@@ -89,140 +93,9 @@ class _HomeScreensState extends State<HomeScreens> {
         ],
       ),
 
-      body: FutureBuilder<List<Post>>(
-        future: futurePosts,
-        builder: (context, postsSnapshot) {
-          if (postsSnapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (postsSnapshot.hasError) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text('Error loading posts: ${postsSnapshot.error}'),
-                  SizedBox(height: 16),
-                  ElevatedButton(
-                    onPressed: _refreshData,
-                    child: Text('Retry'),
-                  ),
-                ],
-              ),
-            );
-          }
-
-          final posts = postsSnapshot.data!;
-          
-          return FutureBuilder<List<Story>>(
-            future: futureStories,
-            builder: (context, storiesSnapshot) {
-              // Show loading for stories while posts are already loaded
-              if (storiesSnapshot.connectionState == ConnectionState.waiting) {
-                return CustomScrollView(
-                  slivers: [
-                    SliverToBoxAdapter(
-                      child: SizedBox(
-                        height: 130,
-                        child: Center(child: CircularProgressIndicator()),
-                      ),
-                    ),
-                    SliverList(
-                      delegate: SliverChildBuilderDelegate(
-                        (context, index) {
-                          final post = posts[index];
-                          return Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 16.0,
-                              vertical: 8.0,
-                            ),
-                            child: DonationCard(
-                              title: post.name,
-                              location: post.location,
-                              imageAsset: 'https://kindify-backend.onrender.com${post.picture}',
-                            ),
-                          );
-                        },
-                        childCount: posts.length,
-                      ),
-                    ),
-                  ],
-                );
-              }
-
-              if (storiesSnapshot.hasError) {
-                // Show posts even if stories fail to load
-                return CustomScrollView(
-                  slivers: [
-                    SliverToBoxAdapter(
-                      child: Container(
-                        height: 130,
-                        padding: EdgeInsets.all(16),
-                        child: Center(
-                          child: Text(
-                            'Could not load stories',
-                            style: TextStyle(color: Colors.grey),
-                          ),
-                        ),
-                      ),
-                    ),
-                    SliverList(
-                      delegate: SliverChildBuilderDelegate(
-                        (context, index) {
-                          final post = posts[index];
-                          return Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 16.0,
-                              vertical: 8.0,
-                            ),
-                            child: DonationCard(
-                              title: post.name,
-                              location: post.location,
-                              imageAsset: 'https://kindify-backend.onrender.com${post.picture}',
-                            ),
-                          );
-                        },
-                        childCount: posts.length,
-                      ),
-                    ),
-                  ],
-                );
-              }
-
-              final stories = storiesSnapshot.data ?? [];
-
-              return RefreshIndicator(
-                onRefresh: () async {
-                  _refreshData();
-                },
-                child: CustomScrollView(
-                  slivers: [
-                    SliverToBoxAdapter(
-                      child: StorySection(stories: stories),
-                    ),
-                    SliverList(
-                      delegate: SliverChildBuilderDelegate(
-                        (context, index) {
-                          final post = posts[index];
-                          return Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 16.0,
-                              vertical: 8.0,
-                            ),
-                            child: DonationCard(
-                              title: post.name,
-                              location: post.location,
-                              imageAsset: 'https://kindify-backend.onrender.com${post.picture}',
-                            ),
-                          );
-                        },
-                        childCount: posts.length,
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            },
-          );
-        },
+      body: IndexedStack(
+        index: _selectedIndex,
+        children: _pages,
       ),
 
       bottomNavigationBar: SafeArea(
@@ -306,7 +179,7 @@ class _HomeScreensState extends State<HomeScreens> {
                         return Expanded(
                           child: Tooltip(
                             message: _barItems[i].label, 
-                            waitDuration: const Duration(milliseconds: 400), 
+                            waitDuration: const Duration(milliseconds: 1), 
                             showDuration: const Duration(seconds: 2),
                             decoration: BoxDecoration(
                               color: Colors.black87,
@@ -318,15 +191,6 @@ class _HomeScreensState extends State<HomeScreens> {
                               highlightColor: Colors.transparent,
                               onTap: () async {
                                 setState(() => _selectedIndex = i);
-
-                                if (i == 1) {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => CategoryPage(),
-                                    ),
-                                  );
-                                }
                               },
                               child: Padding(
                                 padding: const EdgeInsets.only(top: 18.0),

@@ -15,21 +15,7 @@ class _CategoryPageState extends State<CategoryPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: ShaderMask(
-          shaderCallback: (bounds) => const LinearGradient(
-            colors: [AppColors.orange, AppColors.primaryPink],
-          ).createShader(Rect.fromLTWH(0, 0, bounds.width, bounds.height)),
-          child: const Text(
-            "Donation Categories",
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 20,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ),
-      ),
+      
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.symmetric(

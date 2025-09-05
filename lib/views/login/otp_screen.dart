@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
 import 'package:http/http.dart' as http;
 import 'package:kindify_app/services/token_storage.dart';
+import 'package:kindify_app/utils/colors.dart';
 import 'package:kindify_app/utils/loader.dart';
 import 'package:kindify_app/services/toast_service.dart';
 import 'package:kindify_app/views/home/home_screens.dart';
@@ -247,32 +248,39 @@ class _CustomOtpScreenState extends State<CustomOtpScreen> {
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Text(
-                                "Resend",
-                                style: TextStyle(
-                                  decoration: canResend ? TextDecoration.underline : TextDecoration.none,
-                                  fontSize: 17,
-                                  color: Colors.black87.withValues(alpha: canResend ? 1.0 : 0.35),
-                                ),
-                              ),
-                              if (!canResend && countdown > 0) ...[
-                                const SizedBox(width: 6),
+                              if (countdown > 0)
                                 Text(
-                                  "(${countdown}s)",
-                                  style: const TextStyle(
-                                    fontSize: 16,
-                                    color: Colors.redAccent,
-                                    fontWeight: FontWeight.w500,
+                                  "Resend OTP in (${countdown}s)",
+                                  style: TextStyle(
+                                    fontSize: 17,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.black87.withOpacity(0.35), // 🔹 disabled/blurry look
+                                  ),
+                                )
+                              else
+                                ShaderMask(
+                                  shaderCallback: (bounds) => const LinearGradient(
+                                    colors: [AppColors.primaryPink, AppColors.orange],
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                  ).createShader(
+                                    Rect.fromLTWH(0, 0, bounds.width, bounds.height),
+                                  ),
+                                  child: const Text(
+                                    "Resend OTP",
+                                    style: TextStyle(
+                                      fontSize: 17,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.white, // required for ShaderMask
+                                    ),
                                   ),
                                 ),
-                              ],
                             ],
                           ),
                         ),
                       ),
                     ],
                   )
-
                 ],
               ),
             ),
