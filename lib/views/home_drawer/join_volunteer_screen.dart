@@ -512,7 +512,11 @@
 //   }
 // }
 
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:kindify_app/services/api_client.dart';
+import 'package:kindify_app/services/toast_service.dart';
 import 'package:kindify_app/utils/colors.dart';
 
 class JoinVolunteerScreen extends StatefulWidget {
@@ -526,7 +530,7 @@ class _JoinVolunteerScreenState extends State<JoinVolunteerScreen> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
-
+  final ApiClientService _apiClient = ApiClientService();
   /// Dropdown + Checkbox states
   String? selectedTrust;
   String? selectedAvailability;
@@ -535,7 +539,6 @@ class _JoinVolunteerScreenState extends State<JoinVolunteerScreen> {
 
   /// FocusNode for checkbox container (to trigger pink border when focused)
   final FocusNode _checkboxFocusNode = FocusNode();
-
   final List<String> trusts = [
     "Select a Trust",
     "Trust A",
@@ -554,262 +557,340 @@ class _JoinVolunteerScreenState extends State<JoinVolunteerScreen> {
     "Sunday",
   ];
 
-  void _submitForm() {
-    if (_formKey.currentState!.validate()) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Thank you for joining as a volunteer!")),
-      );
+Future<void> _submitForm() async {
+  FocusScope.of(context).unfocus();
+  if (_formKey.currentState!.validate()) {
+    // Trust Validation
+    if (selectedTrust == null || selectedTrust == "Select a Trust") {
+      ToastService.showError(context,"Please select a trust");
+      return;
+    }
+
+    // Availability Validation
+    if (selectedAvailability == null || selectedAvailability == "Select Availability") {
+      ToastService.showError(context,"Please select availability");
+      return;
+    }
+
+    // Morning/Evening Options
+    final selectedOptions = <String>[];
+    if (optionMorning) selectedOptions.add("Morning");
+    if (optionEvening) selectedOptions.add("Evening");
+
+    if (selectedOptions.isEmpty) {
+      ToastService.showError(context,"Please select at least one option");
+      return;
+    }
+
+    // Prepare API Body
+    final body = {
+      "fullName": _nameController.text.trim(),
+      "email": _emailController.text.trim(),
+      "trust": selectedTrust,
+      "availability": selectedAvailability,
+      "options": selectedOptions,
+    };
+    debugPrint(jsonEncode(body));
+    try {
+      final response = await _apiClient.post("/api/volunteer",body);
+      final data = jsonDecode(response.body);
+      debugPrint(response.statusCode.toString());
+      debugPrint(data["message"]);
+      if (response.statusCode == 200 || data["success"] == true) {
+          ToastService.showSuccess(context,data["message"] ?? "Submitted successfully");
+
+          // Reset form
+          _formKey.currentState!.reset();
+          _nameController.clear();
+          _emailController.clear();
+          setState(() {
+            selectedTrust = "Select a Trust";
+            selectedAvailability = "Select Availability";
+            optionMorning = false;
+            optionEvening = false;
+          });
+        
+      } else {
+        ToastService.showError(context,"Something went wrong!");
+      }
+    } catch (e) {
+      ToastService.showError(context,"Error: $e");
     }
   }
+}
 
-  InputDecoration _inputDecoration(String label) {
-    return InputDecoration(
-      labelText: label,
-      labelStyle: const TextStyle(color: AppColors.primaryPink),
-      focusedBorder: const OutlineInputBorder(
-        borderSide: BorderSide(color: AppColors.primaryPink),
-      ),
-      errorBorder: const OutlineInputBorder(
-        borderSide: BorderSide(color: Colors.red, width: 2),
-      ),
-      enabledBorder: const OutlineInputBorder(
-        borderSide: BorderSide(color: Colors.grey),
-      ),
-    );
-  }
+
+InputDecoration _inputDecoration(String label) {
+  return InputDecoration(
+    labelText: label,
+    labelStyle: const TextStyle(color: AppColors.primaryPink),
+
+    // Normal enabled border
+    enabledBorder: const OutlineInputBorder(
+      borderSide: BorderSide(color: Colors.grey),
+    ),
+
+    // Border when focused
+    focusedBorder: const OutlineInputBorder(
+      borderSide: BorderSide(color: AppColors.primaryPink, width: 2),
+    ),
+
+    // Border when there's an error
+    errorBorder: const OutlineInputBorder(
+      borderSide: BorderSide(color: Colors.red, width: 2),
+    ),
+
+    // Border when focused + error
+    focusedErrorBorder: const OutlineInputBorder(
+      borderSide: BorderSide(color: Colors.red, width: 2),
+    ),
+  );
+}
+
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Column(
-        children: [
-          /// 🔹 Gradient Header
-          Container(
-            padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [AppColors.primaryPink, AppColors.orange],
-                begin: Alignment.centerLeft,
-                end: Alignment.centerRight,
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: Scaffold(
+        body: Column(
+          children: [
+            /// 🔹 Gradient Header
+            Container(
+              padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [AppColors.primaryPink, AppColors.orange],
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
+                ),
               ),
-            ),
-            child: ListTile(
-              leading: IconButton(
-                onPressed: () => Navigator.pop(context),
-                icon: const Icon(Icons.arrow_back, color: Colors.white),
-              ),
-              title: const Text(
-                "Join as a Volunteer",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
+              child: ListTile(
+                leading: IconButton(
+                  onPressed: () => Navigator.pop(context),
+                  icon: const Icon(Icons.arrow_back, color: Colors.white),
+                ),
+                title: const Text(
+                  "Join as a Volunteer",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ),
-          ),
-          const SizedBox(height: 50),
-
-          /// 🔹 Main Body
-          Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(20),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  children: [
-                    /// Logo & Title
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Image.asset(
-                          "assets/images/kindifyLogoTransparent.png",
-                          height: 60,
-                          width: 60,
-                          fit: BoxFit.contain,
-                        ),
-                        const SizedBox(width: 12),
-                        ShaderMask(
-                          shaderCallback: (bounds) =>
-                              const LinearGradient(
-                                colors: [AppColors.primaryPink, AppColors.orange],
-                                begin: Alignment.centerLeft,
-                                end: Alignment.centerRight,
-                              ).createShader(
-                                Rect.fromLTWH(0, 0, bounds.width, bounds.height),
+            const SizedBox(height: 50),
+      
+            /// 🔹 Main Body
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(20),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    children: [
+                      /// Logo & Title
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Image.asset(
+                            "assets/images/kindifyLogoTransparent.png",
+                            height: 60,
+                            width: 60,
+                            fit: BoxFit.contain,
+                          ),
+                          const SizedBox(width: 12),
+                          ShaderMask(
+                            shaderCallback: (bounds) =>
+                                const LinearGradient(
+                                  colors: [AppColors.primaryPink, AppColors.orange],
+                                  begin: Alignment.centerLeft,
+                                  end: Alignment.centerRight,
+                                ).createShader(
+                                  Rect.fromLTWH(0, 0, bounds.width, bounds.height),
+                                ),
+                            child: const Text(
+                              "Kindify",
+                              style: TextStyle(
+                                fontSize: 32,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
                               ),
-                          child: const Text(
-                            "Kindify",
-                            style: TextStyle(
-                              fontSize: 32,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 20),
+                        ],
+                      ),
+                      const SizedBox(height: 20),
+      
+                      // Name
+                      TextFormField(
+                        controller: _nameController,
+                        decoration: _inputDecoration("Full Name"),
+                        validator: (value) =>
+                            value!.isEmpty ? "Please enter your name" : null,
+                      ),
+                      const SizedBox(height: 20),
+      
+                      // Email
+                      TextFormField(
+                        controller: _emailController,
+                        decoration: _inputDecoration("Email"),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return "Please enter your email";
+                          }
 
-                    // Name
-                    TextFormField(
-                      controller: _nameController,
-                      decoration: _inputDecoration("Full Name"),
-                      validator: (value) =>
-                          value!.isEmpty ? "Please enter your name" : null,
-                    ),
-                    const SizedBox(height: 20),
+                          // ✅ Regex for proper email validation
+                          final emailRegex = RegExp(
+                            r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                          );
 
-                    // Email
-                    TextFormField(
-                      controller: _emailController,
-                      decoration: _inputDecoration("Email"),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return "Please enter your email";
-                        } else if (!value.contains("@")) {
-                          return "Enter a valid email";
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 20),
+                          if (!emailRegex.hasMatch(value)) {
+                            return "Enter a valid email address";
+                          }
 
-                    /// 🔹 Dropdown 1 → Trust
-                    DropdownButtonFormField<String>(
-                      value: selectedTrust,
-                      decoration: _inputDecoration("Select Trust"),
-                      items: trusts.map((trust) {
-                        return DropdownMenuItem(
-                          value: trust,
-                          child: Text(trust),
-                        );
-                      }).toList(),
-                      onChanged: (value) {
-                        setState(() {
-                          selectedTrust = value;
-                          selectedAvailability = null;
-                          optionMorning = false;
-                          optionEvening = false;
-                        });
-                      },
-                      validator: (value) =>
-                          value == null || value == "Select a Trust"
-                              ? "Please select a Trust"
-                              : null,
-                    ),
-                    const SizedBox(height: 20),
-
-                    /// 🔹 Dropdown 2 → Availability (only visible if trust selected)
-                    if (selectedTrust != null &&
-                        selectedTrust != "Select a Trust") ...[
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 20),
+      
+                      /// 🔹 Dropdown 1 → Trust
                       DropdownButtonFormField<String>(
-                        value: selectedAvailability,
-                        decoration: _inputDecoration("Select Availability"),
-                        items: availabilityOptions.map((option) {
+                        value: selectedTrust,
+                        decoration: _inputDecoration("Select Trust"),
+                        items: trusts.map((trust) {
                           return DropdownMenuItem(
-                            value: option,
-                            child: Text(option),
+                            value: trust,
+                            child: Text(trust),
                           );
                         }).toList(),
                         onChanged: (value) {
                           setState(() {
-                            selectedAvailability = value;
+                            selectedTrust = value;
+                            selectedAvailability = null;
                             optionMorning = false;
                             optionEvening = false;
                           });
                         },
                         validator: (value) =>
-                            value == null || value == "Select Availability"
-                                ? "Please select availability"
+                            value == null || value == "Select a Trust"
+                                ? "Please select a Trust"
                                 : null,
                       ),
                       const SizedBox(height: 20),
-                    ],
-
-                    /// 🔹 Show Checkboxes only when availability is selected
-                    if (selectedAvailability != null &&
-                        selectedAvailability != "Select Availability") ...[
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 20),
-                        child: GestureDetector(
-                          onTap: () {
-                            _checkboxFocusNode.requestFocus();
+      
+                      /// 🔹 Dropdown 2 → Availability (only visible if trust selected)
+                      if (selectedTrust != null &&
+                          selectedTrust != "Select a Trust") ...[
+                        DropdownButtonFormField<String>(
+                          value: selectedAvailability,
+                          decoration: _inputDecoration("Select Availability"),
+                          items: availabilityOptions.map((option) {
+                            return DropdownMenuItem(
+                              value: option,
+                              child: Text(option),
+                            );
+                          }).toList(),
+                          onChanged: (value) {
+                            setState(() {
+                              selectedAvailability = value;
+                              optionMorning = false;
+                              optionEvening = false;
+                            });
                           },
-                          child: Focus(
-                            focusNode: _checkboxFocusNode,
-                            child: InputDecorator(
-                              isFocused: _checkboxFocusNode.hasFocus,
-                              decoration: _inputDecoration("Options"),
-                              child: Column(
-                                children: [
-                                  CheckboxListTile(
-                                    title: const Text("Morning"),
-                                    value: optionMorning,
-                                    activeColor: AppColors.primaryPink,
-                                    onChanged: (val) {
-                                      setState(() => optionMorning = val ?? false);
-                                    },
-                                    controlAffinity: ListTileControlAffinity.leading,
-                                    contentPadding: EdgeInsets.zero,
-                                  ),
-                                  CheckboxListTile(
-                                    title: const Text("Evening"),
-                                    value: optionEvening,
-                                    activeColor: AppColors.primaryPink,
-                                    onChanged: (val) {
-                                      setState(() => optionEvening = val ?? false);
-                                    },
-                                    controlAffinity: ListTileControlAffinity.leading,
-                                    contentPadding: EdgeInsets.zero,
-                                  ),
-                                ],
+                          validator: (value) =>
+                              value == null || value == "Select Availability"
+                                  ? "Please select availability"
+                                  : null,
+                        ),
+                        const SizedBox(height: 20),
+                      ],
+      
+                      /// 🔹 Show Checkboxes only when availability is selected
+                      if (selectedAvailability != null &&
+                          selectedAvailability != "Select Availability") ...[
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 20),
+                          child: GestureDetector(
+                            onTap: () {
+                              _checkboxFocusNode.requestFocus();
+                            },
+                            child: Focus(
+                              focusNode: _checkboxFocusNode,
+                              child: InputDecorator(
+                                isFocused: _checkboxFocusNode.hasFocus,
+                                decoration: _inputDecoration("Options"),
+                                child: Column(
+                                  children: [
+                                    CheckboxListTile(
+                                      title: const Text("Morning"),
+                                      value: optionMorning,
+                                      activeColor: AppColors.primaryPink,
+                                      onChanged: (val) {
+                                        setState(() => optionMorning = val ?? false);
+                                      },
+                                      controlAffinity: ListTileControlAffinity.leading,
+                                      contentPadding: EdgeInsets.zero,
+                                    ),
+                                    CheckboxListTile(
+                                      title: const Text("Evening"),
+                                      value: optionEvening,
+                                      activeColor: AppColors.primaryPink,
+                                      onChanged: (val) {
+                                        setState(() => optionEvening = val ?? false);
+                                      },
+                                      controlAffinity: ListTileControlAffinity.leading,
+                                      contentPadding: EdgeInsets.zero,
+                                    ),
+                                  ],
+                                ),
                               ),
+                            ),
+                          ),
+                        ),
+                      ],
+      
+                      const SizedBox(height: 30),
+      
+                      /// 🔹 Submit Button
+                      Container(
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                            colors: [AppColors.primaryPink, AppColors.orange],
+                            begin: Alignment.centerLeft,
+                            end: Alignment.centerRight,
+                          ),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: ElevatedButton(
+                          onPressed: _submitForm,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.transparent,
+                            shadowColor: Colors.transparent,
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                          child: const Text(
+                            "Submit",
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
                             ),
                           ),
                         ),
                       ),
                     ],
-
-                    const SizedBox(height: 30),
-
-                    /// 🔹 Submit Button
-                    Container(
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          colors: [AppColors.primaryPink, AppColors.orange],
-                          begin: Alignment.centerLeft,
-                          end: Alignment.centerRight,
-                        ),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: ElevatedButton(
-                        onPressed: _submitForm,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.transparent,
-                          shadowColor: Colors.transparent,
-                          padding: const EdgeInsets.symmetric(vertical: 14),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                        child: const Text(
-                          "Submit",
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

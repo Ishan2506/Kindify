@@ -15,150 +15,70 @@ class _CategoryPageState extends State<CategoryPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      
-      body: Padding(
-        padding: EdgeInsets.symmetric(
-          horizontal: MediaQuery.sizeOf(context).width * 0.1,
-          vertical: MediaQuery.sizeOf(context).height * 0.05,
-        ),
-        child: SingleChildScrollView(
+
+      body: SingleChildScrollView(
+        child: SizedBox(
+          width: MediaQuery.sizeOf(context).width,
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              SizedBox(
-                width: MediaQuery.sizeOf(context).width,
-                child: Wrap(
-                  spacing: MediaQuery.sizeOf(context).width * 0.04,
-                  runSpacing: MediaQuery.sizeOf(context).height * 0.02,
-                  children: [
-                    _categoryCard(
-                      () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) {
-                              return FoodDistribution();
-                            },
-                          ),
-                        );
-                      },
-                      Icons.food_bank_rounded,
-                      "Food \nDistribution",
-                    ),
-                    _categoryCard(
-                      () {},
-                      Icons.shopping_bag_outlined,
-                      "Bags \nDistribution",
-                    ),
-                    _categoryCard(
-                      () {},
-                      Icons.menu_book_sharp,
-                      "Books \nDistribution",
-                    ),
-                    _categoryCard(
-                      () {},
-                      Icons.cake_rounded,
-                      "Birthday Special \nDistribution",
-                    ),
-                    _categoryCard(
-                      () {},
-                      Icons.shopping_bag_outlined,
-                      "Bags \nDistribution",
-                    ),
-                    _categoryCard(
-                      () {},
-                      Icons.menu_book_sharp,
-                      "Books \nDistribution",
-                    ),
-                  ],
-                ),
-              ),
+              SizedBox(height: kToolbarHeight),
               Padding(
-                padding: const EdgeInsets.symmetric(vertical: 20),
-                child: InkWell(
-                  onTap: () {
-          
-                  },
-                  child: Container(
-                    padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-                    width: MediaQuery.sizeOf(context).width * 0.9,
-                    height: MediaQuery.sizeOf(context).height * 0.1,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.all(Radius.elliptical(8, 8)),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.3),
-                          blurRadius: 2,
-                          spreadRadius: 1,
-                          offset: Offset(2, 2),
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                child: _specialCardColor(context,() {
+
+                },Icons.stars,"Special Distribution"),
+              ),              Wrap(
+                runAlignment: WrapAlignment.center,
+                spacing: MediaQuery.sizeOf(context).width * 0.08,
+                runSpacing: MediaQuery.sizeOf(context).height * 0.02,
+                children: [
+                  _categoryCard(
+                    context,
+                    () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) {
+                            return FoodDistribution();
+                          },
                         ),
-                      ],
-                    ),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        Row(
-                          children: [
-                            ShaderMask( shaderCallback: (bounds) => const LinearGradient(
-                              colors: [AppColors.primaryPink, AppColors.orange],
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                            ).createShader(bounds),child: Icon(Icons.stars_rounded, size: 40, color: Colors.orangeAccent,),),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 8),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  SizedBox(
-                                    width: MediaQuery.sizeOf(context).width * 0.5,
-                                    child: ShaderMask(
-                                      shaderCallback: (bounds) => const LinearGradient(
-                                        colors: [AppColors.primaryPink, AppColors.orange],
-                                        begin: Alignment.topLeft,
-                                        end: Alignment.bottomRight,
-                                      ).createShader(bounds),
-                                      child: Text(
-                                        "Special Distribution",
-                                        style: TextStyle(color: Colors.white,fontSize: 18),
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ),
-                                  ),
-                                  // ShaderMask(
-                                  //   shaderCallback: (bounds) => const LinearGradient(
-                                  //     colors: [AppColors.primaryPink, AppColors.orange],
-                                  //     begin: Alignment.topLeft,
-                                  //     end: Alignment.bottomRight,
-                                  //   ).createShader(bounds),
-                                  //   child: Text(
-                                  //     "Do the whole distribution",
-                                  //     style: TextStyle(color: Colors.white,fontSize: 12),
-                                  //   ),
-                                  // ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                        ShaderMask(
-                          shaderCallback: (bounds) => const LinearGradient(
-                            colors: [AppColors.primaryPink, AppColors.orange],
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                          ).createShader(bounds),
-                          child: const Icon(
-                            size: 18,
-                            Icons.arrow_forward_ios_outlined,
-                            color: Colors.white, // Needed so gradient is visible
-                          ),
-                        ),
-                      ],
-                    ),
+                      );
+                    },
+                    Icons.food_bank_rounded,
+                    "Food Distribution",
                   ),
-                ),
+                  _categoryCard(
+                    context,
+                    () {},
+                    Icons.shopping_bag_outlined,
+                    "Bags Distribution",
+                  ),
+                  _categoryCard(
+                    context,
+                    () {},
+                    Icons.menu_book_sharp,
+                    "Books Distribution",
+                  ),
+                  _categoryCard(
+                    context,
+                    () {},
+                    Icons.cake_rounded,
+                    "Birthday Distribution",
+                  ),
+                  _categoryCard(
+                    context,
+                    () {},
+                    Icons.shopping_bag_outlined,
+                    "Bags Distribution",
+                  ),
+                  _categoryCard(
+                    context,
+                    () {},
+                    Icons.menu_book_sharp,
+                    "Books Distribution",
+                  ),
+                ],
               ),
             ],
           ),
@@ -169,56 +89,204 @@ class _CategoryPageState extends State<CategoryPage> {
   }
 
   Widget _categoryCard(
+    BuildContext context,
     VoidCallback onPress,
     IconData icon,
     String categoryName,
   ) {
+    final double cardSize =
+        MediaQuery.sizeOf(context).width * 0.35; // same width & height
     return InkWell(
       onTap: onPress,
       child: Container(
-        padding: EdgeInsets.symmetric(vertical: 5),
-        width: MediaQuery.sizeOf(context).width * 0.38,
-        height: MediaQuery.sizeOf(context).height * 0.18,
+        padding: const EdgeInsets.all(3),
+        // border thickness
+        width: cardSize,
+        height: cardSize,
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(
+            colors: [AppColors.primaryPink, AppColors.orange],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.3),
+              blurRadius: 2,
+              spreadRadius: 1,
+              offset: const Offset(2, 2),
+            ),
+          ],
+        ),
+        child: Container(
+          decoration: BoxDecoration(
+            color: AppColors.bgColor,
+            borderRadius: BorderRadius.circular(14),
+          ),
+          padding: const EdgeInsets.all(8), // inner padding
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              // Gradient Icon
+              ShaderMask(
+                shaderCallback: (bounds) => const LinearGradient(
+                  colors: [AppColors.primaryPink, AppColors.orange],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ).createShader(bounds),
+                child: Icon(
+                  icon,
+                  size: cardSize * 0.35, // responsive icon size
+                  color: Colors.white,
+                ),
+              ),
+
+              // Gradient Text
+              ShaderMask(
+                shaderCallback: (bounds) => const LinearGradient(
+                  colors: [AppColors.primaryPink, AppColors.orange],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ).createShader(bounds),
+                child: Text(
+                  categoryName,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: cardSize * 0.12, // responsive font size
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _specialDistributionCard() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 20),
+      child: InkWell(
+        onTap: () {},
+        child: Container(
+          padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+          width: MediaQuery.sizeOf(context).width * 0.9,
+          height: MediaQuery.sizeOf(context).height * 0.1,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.all(Radius.elliptical(8, 8)),
+            gradient: const LinearGradient(
+              colors: [AppColors.primaryPink, AppColors.orange],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.1),
+                blurRadius: 2,
+                spreadRadius: 1,
+                offset: Offset(2, 2),
+              ),
+            ],
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              Row(
+                children: [
+                  Icon(Icons.stars_rounded, size: 40, color: Colors.white),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                          width: MediaQuery.sizeOf(context).width * 0.5,
+                          child: Text(
+                            "Special Distribution",
+                            style: TextStyle(color: Colors.white, fontSize: 18),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const Icon(
+                size: 18,
+                Icons.arrow_forward_ios_outlined,
+                color: Colors.white, // Needed so gradient is visible
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _specialCardColor(
+      BuildContext context,
+      VoidCallback onPress,
+      IconData icon,
+      String categoryName,
+      ) {
+    final double cardSize = MediaQuery.sizeOf(context).width * 0.35; // same width & height
+
+    return InkWell(
+      onTap: onPress,
+      child: Container(
+        padding: const EdgeInsets.all(5),
+        width: cardSize,
+        height: cardSize,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),
-          gradient: LinearGradient(
+          gradient: const LinearGradient(
             colors: [AppColors.primaryPink, AppColors.orange],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.3),
+              color: Colors.black.withOpacity(0.3),
               blurRadius: 2,
               spreadRadius: 1,
-              offset: Offset(2, 2),
+              offset: const Offset(2, 2),
             ),
           ],
         ),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            SizedBox(
-              height: MediaQuery.sizeOf(context).height * 0.1,
-              child: Icon(icon, size: 60, color: Colors.white),
+            Icon(
+              icon,
+              size: cardSize * 0.35, // same as categoryCard
+              color: Colors.white,
             ),
-            Expanded(
-              child: Text(
-                categoryName,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                  shadows: [
-                    Shadow(
-                      color: Colors.black.withOpacity(0.4),
-                      blurRadius: 4,
-                      offset: Offset(1, 1),
-                    ),
-                  ],
-                ),
+            Text(
+              categoryName,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: cardSize * 0.12, // same as categoryCard
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+                shadows: [
+                  Shadow(
+                    color: Colors.black.withOpacity(0.4),
+                    blurRadius: 4,
+                    offset: const Offset(1, 1),
+                  ),
+                ],
               ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
             ),
           ],
         ),

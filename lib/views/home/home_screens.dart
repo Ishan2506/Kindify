@@ -87,15 +87,26 @@ class _HomeScreensState extends State<HomeScreens> {
           ),
         ),
         actions: [
-          IconButton(
-            icon: Icon(Icons.notifications, color: Colors.white, size: 30),
-            onPressed: () {},
+          Tooltip(
+            message: "Notifications",
+            waitDuration: Duration(milliseconds: 100), // delay before showing
+            showDuration: Duration(seconds: 2),
+            child: IconButton(
+              icon: Icon(Icons.notifications, color: Colors.white, size: 30),
+              onPressed: () {},
+            ),
           ),
-          IconButton(
-            icon: Icon(Icons.refresh, color: Colors.white, size: 30),
-            onPressed: _refreshData,
+          Tooltip(
+            message: "Refresh",
+            waitDuration: Duration(milliseconds: 100), // delay before showing
+            showDuration: Duration(seconds: 2),
+            child: IconButton(
+              icon: Icon(Icons.refresh, color: Colors.white, size: 30),
+              onPressed: _refreshData,
+            ),
           ),
         ],
+
       ),
       
       body: IndexedStack(
@@ -184,7 +195,7 @@ class _HomeScreensState extends State<HomeScreens> {
                         return Expanded(
                           child: Tooltip(
                             message: _barItems[i].label, 
-                            waitDuration: const Duration(milliseconds: 1), 
+                            waitDuration: const Duration(milliseconds: 100), 
                             showDuration: const Duration(seconds: 2),
                             decoration: BoxDecoration(
                               color: Colors.black87,

@@ -96,7 +96,7 @@ class ApiClientService {
     };
 
     return await http.post(
-      Uri.parse("$baseUrl/$endpoint"),
+      Uri.parse("$baseUrl$endpoint"),
       headers: headers,
       body: jsonEncode(body),
     );
@@ -112,7 +112,7 @@ class ApiClientService {
     };
 
     return await http.put(
-      Uri.parse("$baseUrl/$endpoint"),
+      Uri.parse("$baseUrl$endpoint"),
       headers: headers,
       body: jsonEncode(body),
     );
@@ -128,7 +128,7 @@ class ApiClientService {
     };
 
     return await http.delete(
-      Uri.parse("$baseUrl/$endpoint"),
+      Uri.parse("$baseUrl$endpoint"),
       headers: headers,
     );
   }
