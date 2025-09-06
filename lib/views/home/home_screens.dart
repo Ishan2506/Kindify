@@ -20,11 +20,12 @@ class _HomeScreensState extends State<HomeScreens> {
   final List<String> carouselImages = [
     "https://picsum.photos/402/200",
   ];
-  int _selectedIndex = 0;
+  int selectedIndex = 0;
   late Future<List<Post>> futurePosts;
   late Future<List<Story>> futureStories;
-  final List<Widget> _pages =  [
-    PostScreen(),
+  final postKey = GlobalKey<PostScreenState>();
+  late final List<Widget> _pages =  [
+    PostScreen(key: postKey),
     CategoryPage(),
     
     // Padding(
@@ -102,7 +103,12 @@ class _HomeScreensState extends State<HomeScreens> {
             showDuration: Duration(seconds: 2),
             child: IconButton(
               icon: Icon(Icons.refresh, color: Colors.white, size: 30),
-              onPressed: _refreshData,
+              onPressed: (){
+                switch(selectedIndex){
+                  case 0:
+                    postKey.currentState?.refresh();
+                }
+              },
             ),
           ),
         ],
@@ -110,7 +116,7 @@ class _HomeScreensState extends State<HomeScreens> {
       ),
       
       body: IndexedStack(
-          index: _selectedIndex,
+          index: selectedIndex,
           children: _pages,
         ),
 
@@ -123,7 +129,7 @@ class _HomeScreensState extends State<HomeScreens> {
               const itemCount = 4;
               const notchDiameter = 56.0;
               final slot = width / itemCount;
-              final notchLeft = _selectedIndex * slot + slot / 2 - notchDiameter / 2;
+              final notchLeft = selectedIndex * slot + slot / 2 - notchDiameter / 2;
 
               return Stack(
                 clipBehavior: Clip.none,
@@ -182,7 +188,7 @@ class _HomeScreensState extends State<HomeScreens> {
                         ],
                       ),
                       child: Icon(
-                        _barItems[_selectedIndex].icon,
+                        _barItems[selectedIndex].icon,
                         color: Colors.white,
                       ),
                     ),
@@ -191,7 +197,7 @@ class _HomeScreensState extends State<HomeScreens> {
                     top: 16,
                     child: Row(
                       children: List.generate(itemCount, (i) {
-                        final isActive = _selectedIndex == i;
+                        final isActive = selectedIndex == i;
                         return Expanded(
                           child: Tooltip(
                             message: _barItems[i].label, 
@@ -206,7 +212,7 @@ class _HomeScreensState extends State<HomeScreens> {
                               splashFactory: NoSplash.splashFactory,
                               highlightColor: Colors.transparent,
                               onTap: () async {
-                                setState(() => _selectedIndex = i);
+                                setState(() => selectedIndex = i);
                               },
                               child: Padding(
                                 padding: const EdgeInsets.only(top: 18.0),

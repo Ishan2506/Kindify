@@ -230,13 +230,31 @@ class _ContactWithUsPageState extends State<ContactWithUsPage> {
   final ApiClientService _apiClient = ApiClientService();
   /// 🔹 Trust dropdown
   String? selectedTrust;
-  final List<String> trusts = [
-    "Trust A",
-    "Trust B",
-    "Trust C",
-    "Trust D",
-  ];
+  List<String> trusts = [];
+  
+  Future<void> _getTrustName() async {
+    try{
+      final response = await _apiClient.get("/auth/trust/all");
+      if(response.statusCode == 200){
+        final data = jsonDecode(response.body);
+        setState(() {
+          trusts = (data["trusts"] as List)
+                  .map((t) => t["trustName"].toString()).toList();
+        });
+      }
+      else{
+        ToastService.showError(context, "Somethings went wrong!");
+      }
 
+    }catch(e){
+      ToastService.showError(context, "Error : ${e}");
+    }
+  }
+  @override
+  void initState() {
+    super.initState();
+    _getTrustName();
+  }
   Future<void> _submitForm() async {
     FocusScope.of(context).unfocus();
   if (!_formKey.currentState!.validate()) return;

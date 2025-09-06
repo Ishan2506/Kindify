@@ -539,12 +539,7 @@ class _JoinVolunteerScreenState extends State<JoinVolunteerScreen> {
 
   /// FocusNode for checkbox container (to trigger pink border when focused)
   final FocusNode _checkboxFocusNode = FocusNode();
-  final List<String> trusts = [
-    "Select a Trust",
-    "Trust A",
-    "Trust B",
-    "Trust C",
-  ];
+   List<String> trusts = [];
 
   final List<String> availabilityOptions = [
     "Select Availability",
@@ -557,11 +552,35 @@ class _JoinVolunteerScreenState extends State<JoinVolunteerScreen> {
     "Sunday",
   ];
 
+    Future<void> _getTrustName() async {
+    try{
+      final response = await _apiClient.get("/auth/trust/all");
+      if(response.statusCode == 200){
+        final data = jsonDecode(response.body);
+        setState(() {
+          trusts = (data["trusts"] as List)
+                  .map((t) => t["trustName"].toString()).toList();
+        });
+      }
+      else{
+        ToastService.showError(context, "Somethings went wrong!");
+      }
+
+    }catch(e){
+      ToastService.showError(context, "Error : ${e}");
+    }
+  }
+  @override
+  void initState() {
+    super.initState();
+    _getTrustName();
+  }
+
 Future<void> _submitForm() async {
   FocusScope.of(context).unfocus();
   if (_formKey.currentState!.validate()) {
     // Trust Validation
-    if (selectedTrust == null || selectedTrust == "Select a Trust") {
+    if (selectedTrust == null) {
       ToastService.showError(context,"Please select a trust");
       return;
     }
@@ -604,7 +623,7 @@ Future<void> _submitForm() async {
           _nameController.clear();
           _emailController.clear();
           setState(() {
-            selectedTrust = "Select a Trust";
+            selectedTrust = null;
             selectedAvailability = "Select Availability";
             optionMorning = false;
             optionEvening = false;
@@ -756,8 +775,9 @@ InputDecoration _inputDecoration(String label) {
                       const SizedBox(height: 20),
       
                       /// 🔹 Dropdown 1 → Trust
+
                       DropdownButtonFormField<String>(
-                        value: selectedTrust,
+                        value: selectedTrust, // starts as null
                         decoration: _inputDecoration("Select Trust"),
                         items: trusts.map((trust) {
                           return DropdownMenuItem(
@@ -774,10 +794,9 @@ InputDecoration _inputDecoration(String label) {
                           });
                         },
                         validator: (value) =>
-                            value == null || value == "Select a Trust"
-                                ? "Please select a Trust"
-                                : null,
+                            value == null ? "Please select a Trust" : null,
                       ),
+
                       const SizedBox(height: 20),
       
                       /// 🔹 Dropdown 2 → Availability (only visible if trust selected)

@@ -11,11 +11,12 @@ import 'package:kindify_app/views/home/donation_card.dart';
 import 'package:kindify_app/views/widgets/story_widget.dart';
 
 class PostScreen extends StatefulWidget {
+  PostScreen({Key? key}) : super(key:key);
   @override
-  State<PostScreen> createState() => _PostScreenState();
+  State<PostScreen> createState() => PostScreenState();
 }
 
-class _PostScreenState extends State<PostScreen> {
+class PostScreenState extends State<PostScreen> {
   final List<String> carouselImages = [
     "https://picsum.photos/402/200",
   ];
@@ -33,6 +34,12 @@ class _PostScreenState extends State<PostScreen> {
   }
 
   void _refreshData() {
+    setState(() {
+      futurePosts = PostRepository().fetchPosts();
+      futureStories = StoryRepository().fetchStories();
+    });
+  }
+    void refresh() {
     setState(() {
       futurePosts = PostRepository().fetchPosts();
       futureStories = StoryRepository().fetchStories();
