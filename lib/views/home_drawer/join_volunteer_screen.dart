@@ -536,6 +536,12 @@ class _JoinVolunteerScreenState extends State<JoinVolunteerScreen> {
   String? selectedAvailability;
   bool optionMorning = false;
   bool optionEvening = false;
+  Map<String, dynamic> selectedData = {
+  'trust': null,
+  'availabilities': {} // Key: availability name, Value: List of options
+};
+
+
 
   /// FocusNode for checkbox container (to trigger pink border when focused)
   final FocusNode _checkboxFocusNode = FocusNode();
@@ -575,6 +581,23 @@ class _JoinVolunteerScreenState extends State<JoinVolunteerScreen> {
     super.initState();
     _getTrustName();
   }
+  void _updateOptionsList() {
+  List<String> options = [];
+  if (optionMorning) options.add("Morning");
+  if (optionEvening) options.add("Evening");
+
+  if (selectedAvailability != null) {
+    // Only save if options are selected
+    if (options.isNotEmpty) {
+      selectedData['availabilities'][selectedAvailability!] = options;
+    } else {
+      // If no option selected, remove that availability entry
+      selectedData['availabilities'].remove(selectedAvailability);
+    }
+  }
+}
+
+
 
 Future<void> _submitForm() async {
   FocusScope.of(context).unfocus();
@@ -638,6 +661,63 @@ Future<void> _submitForm() async {
   }
 }
 
+Widget _buildSelectedAvailabilityCard(String availability, List<String> options) {
+  return Card(
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(12),
+    ),
+    elevation: 4,
+    child: Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+        gradient: LinearGradient(
+          colors: [AppColors.primaryPink.withOpacity(0.6), AppColors.orange.withOpacity(0.6)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+      ),
+      padding: const EdgeInsets.all(16),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  availability,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                    color: Colors.black,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  "Options: ${options.join(", ")}",
+                  style: const TextStyle(
+                    fontSize: 14,
+                    color: Colors.black,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          IconButton(
+            icon: const Icon(Icons.close, color: Colors.white),
+            onPressed: () {
+              setState(() {
+                selectedData['availabilities'].remove(availability);
+              });
+            },
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
+
 
 InputDecoration _inputDecoration(String label) {
   return InputDecoration(
@@ -699,7 +779,7 @@ InputDecoration _inputDecoration(String label) {
                 ),
               ),
             ),
-            const SizedBox(height: 50),
+            SizedBox(height: 30),
       
             /// 🔹 Main Body
             Expanded(
@@ -740,7 +820,7 @@ InputDecoration _inputDecoration(String label) {
                           ),
                         ],
                       ),
-                      const SizedBox(height: 20),
+                      const SizedBox(height: 45),
       
                       // Name
                       TextFormField(
@@ -777,7 +857,7 @@ InputDecoration _inputDecoration(String label) {
                       /// 🔹 Dropdown 1 → Trust
 
                       DropdownButtonFormField<String>(
-                        value: selectedTrust, // starts as null
+                        value: selectedTrust,
                         decoration: _inputDecoration("Select Trust"),
                         items: trusts.map((trust) {
                           return DropdownMenuItem(
@@ -791,15 +871,18 @@ InputDecoration _inputDecoration(String label) {
                             selectedAvailability = null;
                             optionMorning = false;
                             optionEvening = false;
+
+                            selectedData['trust'] = value;
+                            selectedData['availabilities'] ??= {};
                           });
                         },
+
                         validator: (value) =>
                             value == null ? "Please select a Trust" : null,
                       ),
 
                       const SizedBox(height: 20),
-      
-                      /// 🔹 Dropdown 2 → Availability (only visible if trust selected)
+
                       if (selectedTrust != null &&
                           selectedTrust != "Select a Trust") ...[
                         DropdownButtonFormField<String>(
@@ -816,8 +899,12 @@ InputDecoration _inputDecoration(String label) {
                               selectedAvailability = value;
                               optionMorning = false;
                               optionEvening = false;
+
+                              selectedData['availabilities'] ??= {};
+                              selectedData['availabilities'][selectedAvailability!] ??= [];
                             });
                           },
+
                           validator: (value) =>
                               value == null || value == "Select Availability"
                                   ? "Please select availability"
@@ -825,8 +912,7 @@ InputDecoration _inputDecoration(String label) {
                         ),
                         const SizedBox(height: 20),
                       ],
-      
-                      /// 🔹 Show Checkboxes only when availability is selected
+
                       if (selectedAvailability != null &&
                           selectedAvailability != "Select Availability") ...[
                         Padding(
@@ -847,7 +933,12 @@ InputDecoration _inputDecoration(String label) {
                                       value: optionMorning,
                                       activeColor: AppColors.primaryPink,
                                       onChanged: (val) {
-                                        setState(() => optionMorning = val ?? false);
+                                        setState(() {
+                                          optionMorning = val ?? false;
+
+                                          // Update selected options
+                                          _updateOptionsList();
+                                        });
                                       },
                                       controlAffinity: ListTileControlAffinity.leading,
                                       contentPadding: EdgeInsets.zero,
@@ -857,7 +948,12 @@ InputDecoration _inputDecoration(String label) {
                                       value: optionEvening,
                                       activeColor: AppColors.primaryPink,
                                       onChanged: (val) {
-                                        setState(() => optionEvening = val ?? false);
+                                        setState(() {
+                                          optionEvening = val ?? false;
+
+                                          // Update selected options
+                                          _updateOptionsList();
+                                        });
                                       },
                                       controlAffinity: ListTileControlAffinity.leading,
                                       contentPadding: EdgeInsets.zero,
@@ -868,7 +964,23 @@ InputDecoration _inputDecoration(String label) {
                             ),
                           ),
                         ),
+
+                        // Display selected data below
+                        const SizedBox(height: 20),
+
+                        // ✅ PLACE Display Selected Data Cards HERE 👇
+                        if (selectedData['availabilities'].isNotEmpty) ...[
+                          const Text(
+                            "Selected Availabilities",
+                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                          ),
+                          const SizedBox(height: 10),
+                          ...selectedData['availabilities'].entries.map((entry) {
+                            return _buildSelectedAvailabilityCard(entry.key, List<String>.from(entry.value));
+                          }).toList(),
+                        ],
                       ],
+
       
                       const SizedBox(height: 30),
       
