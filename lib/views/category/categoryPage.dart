@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kindify_app/utils/colors.dart';
 import 'package:kindify_app/views/category/foodDistribution.dart';
+import 'package:kindify_app/views/category/special_category.dart';
 import 'package:kindify_app/views/login/login_screen.dart';
 import 'package:kindify_app/views/terms_conditions/terms_conditions.dart';
 
@@ -26,6 +27,14 @@ class _CategoryPageState extends State<CategoryPage> {
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 12),
                 child: _specialCardColor(context,() {
+                   Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) {
+                            return SpecialCategoriesPage();
+                          },
+                        ),
+                      );
 
                 },Icons.stars,"Special Distribution"),
               ),              Wrap(

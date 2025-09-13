@@ -38,7 +38,8 @@ class _HomeScreensState extends State<HomeScreens> {
   void initState() {
     super.initState();
     futurePosts = PostRepository().fetchPosts();
-    futureStories = StoryRepository().fetchStories();
+    // futureStories = StoryRepository().fetchStories();
+    
   }
 
   void _refreshData() {
