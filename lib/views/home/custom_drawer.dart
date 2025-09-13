@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:kindify_app/services/token_storage.dart';
 import 'package:kindify_app/utils/colors.dart';
 import 'package:kindify_app/views/Profile/profile.dart';
+import 'package:kindify_app/views/home_drawer/aboutkindify_page.dart';
 import 'package:kindify_app/views/home_drawer/contactwithus_page.dart';
+import 'package:kindify_app/views/home_drawer/helpsupport_page.dart';
 import 'package:kindify_app/views/home_drawer/join_volunteer_screen.dart';
 import 'package:kindify_app/views/login/login_screen.dart';
 import 'package:share_plus/share_plus.dart';
@@ -189,7 +191,12 @@ class _CustomDrawerState extends State<CustomDrawer> {
             leading: Icon(Icons.info),
             title: Text("About Kindify"),
             onTap: () {
-              print("About Kindify clicked");
+              Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>  AboutKindifyPage(), // replace with your login widget
+                    ),
+              );
             },
           ),
           ListTile(
@@ -241,7 +248,12 @@ class _CustomDrawerState extends State<CustomDrawer> {
             leading: Icon(Icons.support_agent),
             title: Text("Help & Support"),
             onTap: () {
-              print("Help & Support clicked");
+              Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>  HelpSupportPage(), // replace with your login widget
+                    ),
+              );
             },
           ),
           ListTile(

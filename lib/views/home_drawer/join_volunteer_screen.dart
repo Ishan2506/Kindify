@@ -541,14 +541,14 @@ class _JoinVolunteerScreenState extends State<JoinVolunteerScreen> {
   'availabilities': {} // Key: availability name, Value: List of options
 };
 
-
+  Map<String, List<String>> selectedAvailabilitySlots = {};
+    String? currentlySelectedAvailability = '';
 
   /// FocusNode for checkbox container (to trigger pink border when focused)
   final FocusNode _checkboxFocusNode = FocusNode();
    List<String> trusts = [];
 
   final List<String> availabilityOptions = [
-    "Select Availability",
     "Monday",
     "Tuesday",
     "Wednesday",
@@ -581,21 +581,21 @@ class _JoinVolunteerScreenState extends State<JoinVolunteerScreen> {
     super.initState();
     _getTrustName();
   }
-  void _updateOptionsList() {
-  List<String> options = [];
-  if (optionMorning) options.add("Morning");
-  if (optionEvening) options.add("Evening");
+//   void _updateOptionsList() {
+//   List<String> options = [];
+//   if (optionMorning) options.add("Morning");
+//   if (optionEvening) options.add("Evening");
 
-  if (selectedAvailability != null) {
-    // Only save if options are selected
-    if (options.isNotEmpty) {
-      selectedData['availabilities'][selectedAvailability!] = options;
-    } else {
-      // If no option selected, remove that availability entry
-      selectedData['availabilities'].remove(selectedAvailability);
-    }
-  }
-}
+//   if (selectedAvailability != null) {
+//     // Only save if options are selected
+//     if (options.isNotEmpty) {
+//       selectedData['availabilities'][selectedAvailability!] = options;
+//     } else {
+//       // If no option selected, remove that availability entry
+//       selectedData['availabilities'].remove(selectedAvailability);
+//     }
+//   }
+// }
 
 
 
@@ -607,30 +607,11 @@ Future<void> _submitForm() async {
       ToastService.showError(context,"Please select a trust");
       return;
     }
-
-    // Availability Validation
-    if (selectedAvailability == null || selectedAvailability == "Select Availability") {
-      ToastService.showError(context,"Please select availability");
-      return;
-    }
-
-    // Morning/Evening Options
-    final selectedOptions = <String>[];
-    if (optionMorning) selectedOptions.add("Morning");
-    if (optionEvening) selectedOptions.add("Evening");
-
-    if (selectedOptions.isEmpty) {
-      ToastService.showError(context,"Please select at least one option");
-      return;
-    }
-
-    // Prepare API Body
     final body = {
       "fullName": _nameController.text.trim(),
       "email": _emailController.text.trim(),
       "trust": selectedTrust,
-      "availability": selectedAvailability,
-      "options": selectedOptions,
+      "availability": selectedAvailabilitySlots
     };
     debugPrint(jsonEncode(body));
     try {
@@ -648,6 +629,8 @@ Future<void> _submitForm() async {
           setState(() {
             selectedTrust = null;
             selectedAvailability = "Select Availability";
+            selectedAvailabilitySlots = {};
+            currentlySelectedAvailability = null;
             optionMorning = false;
             optionEvening = false;
           });
@@ -660,6 +643,23 @@ Future<void> _submitForm() async {
     }
   }
 }
+void _updateAvailabilitySlot() {
+  List<String> options = [];
+  if (optionMorning) options.add('Morning');
+  if (optionEvening) options.add('Evening');
+
+  final selectedAvailability = currentlySelectedAvailability;
+
+  if (selectedAvailability != null && selectedAvailability.isNotEmpty) {
+    if (options.isNotEmpty) {
+      selectedAvailabilitySlots[selectedAvailability] = options;
+    } else {
+      selectedAvailabilitySlots.remove(selectedAvailability);
+    }
+  }
+}
+
+
 
 Widget _buildSelectedAvailabilityCard(String availability, List<String> options) {
   return Card(
@@ -882,88 +882,101 @@ InputDecoration _inputDecoration(String label) {
                       ),
 
                       const SizedBox(height: 20),
-
                       if (selectedTrust != null &&
                           selectedTrust != "Select a Trust") ...[
-                        DropdownButtonFormField<String>(
-                          value: selectedAvailability,
-                          decoration: _inputDecoration("Select Availability"),
-                          items: availabilityOptions.map((option) {
-                            return DropdownMenuItem(
-                              value: option,
-                              child: Text(option),
-                            );
-                          }).toList(),
-                          onChanged: (value) {
-                            setState(() {
-                              selectedAvailability = value;
-                              optionMorning = false;
-                              optionEvening = false;
-
-                              selectedData['availabilities'] ??= {};
-                              selectedData['availabilities'][selectedAvailability!] ??= [];
-                            });
-                          },
-
-                          validator: (value) =>
-                              value == null || value == "Select Availability"
-                                  ? "Please select availability"
-                                  : null,
-                        ),
-                        const SizedBox(height: 20),
-                      ],
-
-                      if (selectedAvailability != null &&
-                          selectedAvailability != "Select Availability") ...[
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 20),
-                          child: GestureDetector(
-                            onTap: () {
-                              _checkboxFocusNode.requestFocus();
-                            },
-                            child: Focus(
-                              focusNode: _checkboxFocusNode,
-                              child: InputDecorator(
-                                isFocused: _checkboxFocusNode.hasFocus,
-                                decoration: _inputDecoration("Options"),
-                                child: Column(
-                                  children: [
-                                    CheckboxListTile(
-                                      title: const Text("Morning"),
-                                      value: optionMorning,
-                                      activeColor: AppColors.primaryPink,
-                                      onChanged: (val) {
-                                        setState(() {
-                                          optionMorning = val ?? false;
-
-                                          // Update selected options
-                                          _updateOptionsList();
-                                        });
-                                      },
-                                      controlAffinity: ListTileControlAffinity.leading,
-                                      contentPadding: EdgeInsets.zero,
-                                    ),
-                                    CheckboxListTile(
-                                      title: const Text("Evening"),
-                                      value: optionEvening,
-                                      activeColor: AppColors.primaryPink,
-                                      onChanged: (val) {
-                                        setState(() {
-                                          optionEvening = val ?? false;
-
-                                          // Update selected options
-                                          _updateOptionsList();
-                                        });
-                                      },
-                                      controlAffinity: ListTileControlAffinity.leading,
-                                      contentPadding: EdgeInsets.zero,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            "Select Availability",
+                            style: TextStyle(color: AppColors.primaryPink),
                           ),
                         ),
+                        Wrap(
+                          spacing: 12,
+                          runSpacing: 12,
+                          children: availabilityOptions.map((day) {
+                            final isSelected = selectedAvailabilitySlots.containsKey(day);
+                            final isCurrentlyEditing = currentlySelectedAvailability == day;
+
+                            return Container(
+                              constraints: BoxConstraints(
+                                minWidth: 80,
+                                maxWidth: MediaQuery.of(context).size.width * 0.3,  // Max 30% of screen width
+                              ),
+                              child: InputChip(
+                                avatar: isSelected
+                                    ? Icon(Icons.check_circle, color: AppColors.primaryPink)
+                                    : null,
+                                label: Text(
+                                  day,
+                                  textAlign: TextAlign.center,
+                                  overflow: TextOverflow.ellipsis,  // Prevent text overflow
+                                  style: TextStyle(
+                                    fontWeight: isCurrentlyEditing ? FontWeight.bold : FontWeight.normal,
+                                    color: isCurrentlyEditing ? AppColors.primaryPink : Colors.black,
+                                  ),
+                                ),
+                                selected: isCurrentlyEditing,
+                                selectedColor: AppColors.primaryPink.withOpacity(0.6),
+                                onSelected: (selected) {
+                                  setState(() {
+                                    currentlySelectedAvailability = selected ? day : '';
+                                    optionMorning = selectedAvailabilitySlots[currentlySelectedAvailability]?.contains('Morning') ?? false;
+                                    optionEvening = selectedAvailabilitySlots[currentlySelectedAvailability]?.contains('Evening') ?? false;
+                                  });
+                                },
+                                deleteIcon: Icon(Icons.close, size: 24, color: Colors.red),
+                                onDeleted: () {
+                                  setState(() {
+                                    selectedAvailabilitySlots.remove(day);
+                                    if (currentlySelectedAvailability == day) {
+                                      currentlySelectedAvailability = '';
+                                      optionMorning = false;
+                                      optionEvening = false;
+                                    }
+                                  });
+                                },
+                              ),
+                            );
+                          }).toList(),
+                        ),
+                      ],
+                      const SizedBox(height: 20),
+
+                      if (currentlySelectedAvailability != null && currentlySelectedAvailability!.isNotEmpty)...[
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text("Select Slot", style: TextStyle(color: AppColors.primaryPink)),
+
+                            CheckboxListTile(
+                              title: Text("Morning"),
+                              value: optionMorning,
+                              activeColor: AppColors.primaryPink,
+                              onChanged: (val) {
+                                setState(() {
+                                  optionMorning = val ?? false;
+                                  _updateAvailabilitySlot();
+                                });
+                              },
+                            ),
+
+                            CheckboxListTile(
+                              title: Text("Evening"),
+                              value: optionEvening,
+                              activeColor: AppColors.primaryPink,
+                              onChanged: (val) {
+                                setState(() {
+                                  optionEvening = val ?? false;
+                                  _updateAvailabilitySlot();
+                                });
+                              },
+                            ),
+                          ],
+                        ),
+                      ],  
+
+                        
 
                         // Display selected data below
                         const SizedBox(height: 20),
@@ -979,7 +992,7 @@ InputDecoration _inputDecoration(String label) {
                             return _buildSelectedAvailabilityCard(entry.key, List<String>.from(entry.value));
                           }).toList(),
                         ],
-                      ],
+                      
 
       
                       const SizedBox(height: 30),
