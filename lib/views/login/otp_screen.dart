@@ -58,7 +58,7 @@ class _CustomOtpScreenState extends State<CustomOtpScreen> {
       isLoading = true;
     });
     try{
-      var response = await http.post(Uri.parse("https://kindify-backend.onrender.com/auth/login"),
+      var response = await http.post(Uri.parse("https://kindify-backend-zspk.onrender.com/auth/login"),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode({
           "email": widget.email,
@@ -96,7 +96,7 @@ class _CustomOtpScreenState extends State<CustomOtpScreen> {
   Future<void> _verify() async {
     try{
       if(otpCode.length ==6){
-          var response = await http.post(Uri.parse("https://kindify-backend.onrender.com/auth/verify-login"),
+          var response = await http.post(Uri.parse("https://kindify-backend-zspk.onrender.com/auth/verify-login"),
               headers: {"Content-Type": "application/json"},
               body: jsonEncode({
                 "email": widget.email,

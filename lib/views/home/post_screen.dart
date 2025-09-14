@@ -3,6 +3,7 @@ import 'package:kindify_app/api/post_repository.dart';
 import 'package:kindify_app/api/story_repository.dart';
 import 'package:kindify_app/model/post.dart';
 import 'package:kindify_app/model/story.dart';
+import 'package:kindify_app/services/api_client.dart';
 import 'package:kindify_app/services/token_storage.dart';
 import 'package:kindify_app/utils/colors.dart';
 import 'package:kindify_app/views/category/categoryPage.dart';
@@ -25,11 +26,18 @@ class PostScreenState extends State<PostScreen> {
   late Future<List<Post>> futurePosts;
   late Future<List<Story>> futureStories;
   
-  
   @override
   void initState() {
     super.initState();
+    try{
+
     futurePosts = PostRepository().fetchPosts();
+    debugPrint("Token in Post:- ${TokenStorageService.getToken()}");
+    debugPrint("abcd: ${futurePosts.toString()}");
+    }catch(e)
+    {
+      debugPrint("Error:-- ${e}");
+    }
     futureStories = StoryRepository().fetchStories();
   }
 
@@ -97,7 +105,7 @@ class PostScreenState extends State<PostScreen> {
                             child: DonationCard(
                               title: post.name,
                               location: post.location,
-                              imageAsset: 'https://kindify-backend.onrender.com${post.picture}',
+                              imageAsset: 'https://kindify-backend-zspk.onrender.com${post.picture}',
                             ),
                           );
                         },
@@ -136,7 +144,7 @@ class PostScreenState extends State<PostScreen> {
                             child: DonationCard(
                               title: post.name,
                               location: post.location,
-                              imageAsset: 'https://kindify-backend.onrender.com${post.picture}',
+                              imageAsset: 'https://kindify-backend-zspk.onrender.com${post.picture}',
                             ),
                           );
                         },
@@ -170,7 +178,7 @@ class PostScreenState extends State<PostScreen> {
                             child: DonationCard(
                               title: post.name,
                               location: post.location,
-                              imageAsset: 'https://kindify-backend.onrender.com${post.picture}',
+                              imageAsset: 'https://kindify-backend-zspk.onrender.com${post.picture}',
                             ),
                           );
                         },

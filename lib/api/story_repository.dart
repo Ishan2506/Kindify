@@ -2,33 +2,28 @@
 import 'dart:convert';
 import 'dart:developer';
 // import 'dart:log';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:kindify_app/services/api_client.dart';
 import 'package:kindify_app/services/token_storage.dart';
 import '../model/story.dart';
 
 class StoryRepository {
-  static const String baseUrl = 'https://kindify-backend.onrender.com/api';
+  static const String baseUrl = 'https://kindify-backend-zspk.onrender.com/api';
 
   Future<List<Story>> fetchStories() async {
+    final ApiClientService _apiClient = ApiClientService();
+
     // Get the token from storage
-    // final String? token = await TokenStorageService.getToken();
-    final String? token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4OWY2YjgxYjMzOTM1YWNmYWY5NmVhMSIsImVtYWlsIjoiZGV2c2hhaDEyMDkwMkBnbWFpbC5jb20iLCJyb2xlIjoiVXNlciIsImlhdCI6MTc1NjU3MzU1MywiZXhwIjoxNzU3MTc4MzUzfQ.vXzxz0k-KAotT7s-30xINyXh913zTWGlumULlhuli44';
-    
-    // Prepare headers
-    final Map<String, String> headers = {
-      'Content-Type': 'application/json',
-    };
-    
-    // Add Authorization header if token exists
-    if (token != null && token.isNotEmpty) {
-      headers['Authorization'] = 'Bearer $token';
-    }
+    final String? token = await TokenStorageService.getToken();
 
     try {
-      final response = await http.get(
-        Uri.parse('$baseUrl/stories'),
-        headers: headers,
-      );
+      final token = await TokenStorageService.getToken();
+      //debugPrint("ToksssStory: $token");
+    //debugPrint("Toksss: ${TokenStorageService.getToken().toString()}");
+    final response = await _apiClient.get(
+      "/api/stories",
+    );
       
       log('Stories Status Code: ${response.statusCode}');
       log('Stories Response: ${response.body}');

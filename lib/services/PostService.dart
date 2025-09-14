@@ -2,15 +2,19 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:kindify_app/model/post.dart';
 import 'package:kindify_app/services/api_client.dart';
+import 'package:kindify_app/services/token_storage.dart';
 
 class PostService {
   final ApiClientService _apiClient = ApiClientService();
 
   Future<List<Post>> fetchPosts({int page = 1, int limit = 10}) async {
+    debugPrint("Toksss: ${TokenStorageService.getToken().toString()}");
     final response = await _apiClient.get(
       "/api/posts",
       params: {"page": "$page", "limit": "$limit"},
     );
+
+    debugPrint("In Fetch:- ${response}");
 
     debugPrint("🔹 Status: ${response.statusCode}");
     debugPrint("🔹 Body: ${response.body}");

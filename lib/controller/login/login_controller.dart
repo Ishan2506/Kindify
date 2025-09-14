@@ -21,7 +21,7 @@ class LoginController {
     debugPrint("Email:-${email}_Role:- $selectedRole");
 
     try{
-      var response = await http.post(Uri.parse("https://kindify-backend.onrender.com/auth/login"),
+      var response = await http.post(Uri.parse("https://kindify-backend-zspk.onrender.com/auth/login"),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode({
           "email": email,
