@@ -29,15 +29,7 @@ class PostScreenState extends State<PostScreen> {
   @override
   void initState() {
     super.initState();
-    try{
-
     futurePosts = PostRepository().fetchPosts();
-    debugPrint("Token in Post:- ${TokenStorageService.getToken()}");
-    debugPrint("abcd: ${futurePosts.toString()}");
-    }catch(e)
-    {
-      debugPrint("Error:-- ${e}");
-    }
     futureStories = StoryRepository().fetchStories();
   }
 
@@ -106,6 +98,8 @@ class PostScreenState extends State<PostScreen> {
                               title: post.name,
                               location: post.location,
                               imageAsset: 'https://kindify-backend-zspk.onrender.com${post.picture}',
+                              totalLikes: post.totalLikes,
+                              postId: post.id,
                             ),
                           );
                         },
@@ -145,6 +139,8 @@ class PostScreenState extends State<PostScreen> {
                               title: post.name,
                               location: post.location,
                               imageAsset: 'https://kindify-backend-zspk.onrender.com${post.picture}',
+                              totalLikes: post.totalLikes,
+                              postId: post.id,
                             ),
                           );
                         },
@@ -179,6 +175,8 @@ class PostScreenState extends State<PostScreen> {
                               title: post.name,
                               location: post.location,
                               imageAsset: 'https://kindify-backend-zspk.onrender.com${post.picture}',
+                              totalLikes: post.totalLikes,
+                              postId: post.id,
                             ),
                           );
                         },

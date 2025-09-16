@@ -9,6 +9,7 @@ import 'package:kindify_app/views/category/categoryPage.dart';
 import 'package:kindify_app/views/home/custom_drawer.dart';
 import 'package:kindify_app/views/home/donation_card.dart';
 import 'package:kindify_app/views/home/post_screen.dart';
+import 'package:kindify_app/views/transaction/transactionPage.dart';
 import 'package:kindify_app/views/widgets/story_widget.dart';
 
 class HomeScreens extends StatefulWidget {
@@ -27,6 +28,7 @@ class _HomeScreensState extends State<HomeScreens> {
   late final List<Widget> _pages =  [
     PostScreen(key: postKey),
     CategoryPage(),
+    TransactionPage()
     
     // Padding(
     //   padding: EdgeInsets.only(top: kToolbarHeight + 8.0),
