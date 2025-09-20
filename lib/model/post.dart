@@ -37,4 +37,8 @@ class Post {
       totalSaves: json['totalSaves'] ?? 0,
     );
   }
+  /// Check if current user liked this post
+  bool isLikedByUser(String? userId) {
+    return likedBy.contains(userId);
+  }
 }

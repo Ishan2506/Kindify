@@ -25,10 +25,11 @@ class PostScreenState extends State<PostScreen> {
 
   late Future<List<Post>> futurePosts;
   late Future<List<Story>> futureStories;
-  
+  late String? userId;
   @override
-  void initState() {
+  void initState(){
     super.initState();
+    _loadUserId();
     futurePosts = PostRepository().fetchPosts();
     futureStories = StoryRepository().fetchStories();
   }
@@ -37,6 +38,12 @@ class PostScreenState extends State<PostScreen> {
     setState(() {
       futurePosts = PostRepository().fetchPosts();
       futureStories = StoryRepository().fetchStories();
+    });
+  }
+  Future<void> _loadUserId() async {
+    final String? id = await TokenStorageService.getUserId();
+    setState(() {
+      userId = id;
     });
   }
     void refresh() {
@@ -89,6 +96,7 @@ class PostScreenState extends State<PostScreen> {
                       delegate: SliverChildBuilderDelegate(
                         (context, index) {
                           final post = posts[index];
+                          final isLiked = post.isLikedByUser(userId);
                           return Padding(
                             padding: const EdgeInsets.symmetric(
                               horizontal: 16.0,
@@ -100,6 +108,7 @@ class PostScreenState extends State<PostScreen> {
                               imageAsset: 'https://kindify-backend-zspk.onrender.com${post.picture}',
                               totalLikes: post.totalLikes,
                               postId: post.id,
+                              isLiked: isLiked,
                             ),
                           );
                         },
@@ -141,6 +150,7 @@ class PostScreenState extends State<PostScreen> {
                               imageAsset: 'https://kindify-backend-zspk.onrender.com${post.picture}',
                               totalLikes: post.totalLikes,
                               postId: post.id,
+                              isLiked: post.isLikedByUser(userId),
                             ),
                           );
                         },
@@ -177,6 +187,7 @@ class PostScreenState extends State<PostScreen> {
                               imageAsset: 'https://kindify-backend-zspk.onrender.com${post.picture}',
                               totalLikes: post.totalLikes,
                               postId: post.id,
+                              isLiked: post.isLikedByUser(userId),
                             ),
                           );
                         },

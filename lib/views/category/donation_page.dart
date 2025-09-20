@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:kindify_app/utils/colors.dart';
 
 class DonationScreen extends StatefulWidget {
   final String title; // e.g. "Clothes Distribution"
@@ -55,10 +56,11 @@ class _DonationScreenState extends State<DonationScreen> {
 
   Future<void> pickDate() async {
     DateTime now = DateTime.now();
+    DateTime minSelectableDate = now.add(Duration(days: 5));
     final picked = await showDatePicker(
       context: context,
-      initialDate: selectedDate ?? now,
-      firstDate: DateTime(2020),
+      initialDate: minSelectableDate,
+      firstDate: minSelectableDate,
       lastDate: DateTime(2100),
     );
 
@@ -103,32 +105,36 @@ class _DonationScreenState extends State<DonationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: Text(widget.title,style: TextStyle(color: Colors.white),),
-        centerTitle: true,
-        flexibleSpace: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Colors.deepOrangeAccent, Colors.orange],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-          ),
-        ),
-        elevation: 0,
-      ),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
+      
+      body:Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              Container(
+              padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top,bottom: MediaQuery.of(context).padding.bottom),
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [AppColors.primaryPink, AppColors.orange],
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
+                ),
+              ),
+              child: ListTile(
+                leading: IconButton(
+                  onPressed: () => Navigator.pop(context),
+                  icon: const Icon(Icons.arrow_back, color: Colors.white),
+                ),
+                title: Text(
+                  widget.title,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
               // Donation Date with DatePicker
-              SizedBox(height: 100,),
+              SizedBox(height: 50,),
               GestureDetector(
                 onTap: pickDate,
                 child: AbsorbPointer(
@@ -192,7 +198,6 @@ class _DonationScreenState extends State<DonationScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text("₹ $total", style: const TextStyle(fontSize: 18)),
-                    const Text("Donate Now"),
                   ],
                 ),
               ),
@@ -200,30 +205,60 @@ class _DonationScreenState extends State<DonationScreen> {
               const Spacer(),
 
               // Donate Button
-              InkWell(
-                onTap: () {
-                  // Handle Donate Action
-                },
-                child: Container(
-                  height: 50,
-                  decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: [Colors.deepOrangeAccent, Colors.orange],
-                    ),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: const Center(
-                    child: Text(
-                      "Donate Now",
-                      style: TextStyle(color: Colors.white, fontSize: 18),
+              Padding(
+                padding: const EdgeInsets.only(
+                  bottom: 26.0, // spacing from bottom
+                ),
+                child: Center(
+                  child: SizedBox(
+                    width: 350, // Set your desired width
+                    height: 50, // Keep height same
+                    child: InkWell(
+                      onTap: () {
+                        // Handle Donate Action
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                            colors: [AppColors.primaryPink, AppColors.orange],
+                          ),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: const Center(
+                          child: Text(
+                            "Donate Now",
+                            style: TextStyle(color: Colors.white, fontSize: 18),
+                          ),
+                        ),
+                      ),
                     ),
                   ),
                 ),
-              ),
+              )
+
+              // InkWell(
+              //   onTap: () {
+              //     // Handle Donate Action
+              //   },
+              //   child: Container(
+              //     height: 50,
+              //     decoration: BoxDecoration(
+              //       gradient: const LinearGradient(
+              //         colors: [AppColors.primaryPink,AppColors.orange],
+              //       ),
+              //       borderRadius: BorderRadius.circular(12),
+              //     ),
+              //     child: const Center(
+              //       child: Text(
+              //         "Donate Now",
+              //         style: TextStyle(color: Colors.white, fontSize: 18),
+              //       ),
+              //     ),
+              //   ),
+              // ),
             ],
           ),
-        ),
-      ),
+        
     );
   }
 }

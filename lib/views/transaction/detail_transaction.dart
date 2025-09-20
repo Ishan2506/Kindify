@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+import 'package:kindify_app/services/toast_service.dart';
 import 'package:kindify_app/utils/colors.dart';
+import 'package:kindify_app/views/home_drawer/helpsupport_page.dart';
 
 class DetailTransaction extends StatefulWidget {
   const DetailTransaction({super.key});
@@ -75,9 +78,9 @@ class _DetailTransactionState extends State<DetailTransaction> {
   Widget _topContainer() {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-      height: MediaQuery
-          .sizeOf(context)
-          .height * 0.3,
+      // height: MediaQuery
+      //     .sizeOf(context)
+      //     .height * 0.3,
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [AppColors.primaryPink, AppColors.orange],
@@ -91,6 +94,7 @@ class _DetailTransactionState extends State<DetailTransaction> {
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
         children: [_topRow(), _paymentSuccessAndDateTime()],
       ),
     );
@@ -139,27 +143,38 @@ class _DetailTransactionState extends State<DetailTransaction> {
                 ),
                 Padding(
                   padding: const EdgeInsets.only(left: 2),
-                  child: Container(
-                    width: MediaQuery
-                        .sizeOf(context)
-                        .width * 0.25,
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.white),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 4),
-                          child: Icon(
-                            Icons.help_outline,
-                            size: 13,
-                            color: Colors.white,
-                          ),
+                  child: GestureDetector(
+                    onTap: (){
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => HelpSupportPage(),  // Your Help & Support page
                         ),
-                        Text("Help", style: TextStyle(color: Colors.white)),
-                      ],
+                      );
+                    },
+                    child: Container(
+                      width: MediaQuery
+                          .sizeOf(context)
+                          .width * 0.25,
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.white),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 4),
+                            child: Icon(
+                              Icons.help_outline,
+                              size: 13,
+                              color: Colors.white,
+                              
+                            ),
+                          ),
+                          Text("Help", style: TextStyle(color: Colors.white)),
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -479,6 +494,7 @@ class _DetailTransactionState extends State<DetailTransaction> {
   }
 
   Widget _transactionId() {
+    const transactionId = "10051983201"; // You can also make it dynamic
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: SizedBox(
@@ -536,7 +552,7 @@ class _DetailTransactionState extends State<DetailTransaction> {
                                 ),
                               ),
                               Text(
-                                "10051983201",
+                                transactionId,
                                 style: TextStyle(
                                   color: Colors.black.withValues(alpha: 0.6),
                                   fontSize: 14,
@@ -544,11 +560,35 @@ class _DetailTransactionState extends State<DetailTransaction> {
                               ),
                             ],
                           ),
-                          Icon(
-                            Icons.copy_outlined,
-                            size: 14,
-                            color: Colors.black.withValues(alpha: 0.6),
-                          ),
+                          Row(
+                            children: [
+                              // Copy Icon
+                              InkWell(
+                                onTap: () {
+                                  Clipboard.setData(const ClipboardData(text: transactionId));
+                                  ToastService.showSuccess(context, "Transaction ID copied!");
+                                },
+                                child: Icon(
+                                  Icons.copy_outlined,
+                                  size: 24, // slightly bigger for better touch
+                                  color: Colors.black.withOpacity(0.6),
+                                ),
+                              ),
+                              const SizedBox(width: 15), // small spacing between icons
+                              // Download Icon
+                              InkWell(
+                                onTap: () {
+                                  // Handle download action here
+                                },
+                                child: Icon(
+                                  Icons.download_outlined,
+                                  size: 25,
+                                  color: Colors.black.withOpacity(0.6),
+                                ),
+                              ),
+                            ],
+                          )
+
                         ],
                       ),
                     ],

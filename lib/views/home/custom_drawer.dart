@@ -7,6 +7,7 @@ import 'package:kindify_app/views/home_drawer/contactwithus_page.dart';
 import 'package:kindify_app/views/home_drawer/helpsupport_page.dart';
 import 'package:kindify_app/views/home_drawer/join_volunteer_screen.dart';
 import 'package:kindify_app/views/login/login_screen.dart';
+import 'package:kindify_app/views/transaction/transactionPage.dart';
 import 'package:share_plus/share_plus.dart';
 
 class CustomDrawer extends StatefulWidget {
@@ -182,9 +183,9 @@ class _CustomDrawerState extends State<CustomDrawer> {
           ),
           ListTile(
             leading: Icon(Icons.payment),
-            title: Text("Total Donation"),
+            title: Text("Total Transaction"),
             onTap: () {
-              print("Total Donation clicked");
+              Navigator.push(context, MaterialPageRoute(builder: (context) => TransactionPage()));
             },
           ),
           ListTile(
@@ -240,6 +241,13 @@ class _CustomDrawerState extends State<CustomDrawer> {
           ListTile(
             leading: Icon(Icons.handshake),
             title: Text("Partner with Us"),
+            onTap: () {
+              print("Partner with Us clicked");
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.handshake),
+            title: Text("Request for donation"),
             onTap: () {
               print("Partner with Us clicked");
             },

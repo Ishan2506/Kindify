@@ -31,6 +31,181 @@ class _TransactionPageState extends State<TransactionPage> {
       ),
     );
   }
+  void _showFilterDialog() {
+    showModalBottomSheet(
+      context: context,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
+        return Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                "Filter Transactions",
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                ),
+              ),
+              const SizedBox(height: 16),
+              ListTile(
+                leading: Icon(Icons.attach_money),
+                title: Text("By Amount"),
+                onTap: () {
+                  Navigator.pop(context);
+                  _showAmountFilterDialog();
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.date_range),
+                title: Text("By Date"),
+                onTap: () {
+                  Navigator.pop(context);
+                  _showDateFilterDialog();
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+  void _showAmountFilterDialog() {
+    final minController = TextEditingController();
+    final maxController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Filter by Amount"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: minController,
+                keyboardType: TextInputType.number,
+                decoration: const InputDecoration(labelText: "Min Amount"),
+              ),
+              TextField(
+                controller: maxController,
+                keyboardType: TextInputType.number,
+                decoration: const InputDecoration(labelText: "Max Amount"),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("Cancel"),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                final min = double.tryParse(minController.text) ?? 0;
+                final max = double.tryParse(maxController.text) ?? double.infinity;
+
+                // setState(() {
+                //   filteredTransactions = allTransactions
+                //       .where((tx) => tx.amount >= min && tx.amount <= max)
+                //       .toList();
+                // });
+
+                Navigator.pop(context);
+              },
+              child: const Text("Apply"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showDateFilterDialog() {
+    DateTime? fromDate;
+    DateTime? toDate;
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Filter by Date"),
+          content: StatefulBuilder(
+            builder: (context, setState) {
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  ListTile(
+                    title: Text(fromDate == null
+                        ? "From Date"
+                        : "${fromDate!.day}-${fromDate!.month}-${fromDate!.year}"),
+                    leading: const Icon(Icons.calendar_today),
+                    onTap: () async {
+                      final picked = await showDatePicker(
+                        context: context,
+                        initialDate: fromDate ?? DateTime.now(),
+                        firstDate: DateTime(2020),
+                        lastDate: DateTime.now(),
+                      );
+                      if (picked != null) {
+                        setState(() {
+                          fromDate = picked;
+                        });
+                      }
+                    },
+                  ),
+                  ListTile(
+                    title: Text(toDate == null
+                        ? "To Date"
+                        : "${toDate!.day}-${toDate!.month}-${toDate!.year}"),
+                    leading: const Icon(Icons.calendar_today),
+                    onTap: () async {
+                      final picked = await showDatePicker(
+                        context: context,
+                        initialDate: toDate ?? DateTime.now(),
+                        firstDate: DateTime(2020),
+                        lastDate: DateTime.now(),
+                      );
+                      if (picked != null) {
+                        setState(() {
+                          toDate = picked;
+                        });
+                      }
+                    },
+                  ),
+                ],
+              );
+            },
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("Cancel"),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                if (fromDate != null && toDate != null) {
+                  // setState(() {
+                  //   filteredTransactions = allTransactions
+                  //       .where((tx) =>
+                  //           tx.date.isAfter(fromDate!.subtract(const Duration(days: 1))) &&
+                  //           tx.date.isBefore(toDate!.add(const Duration(days: 1))))
+                  //       .toList();
+                  // });
+                }
+                Navigator.pop(context);
+              },
+              child: const Text("Apply"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+
 
   Widget _topCards() {
     return Padding(
@@ -94,7 +269,8 @@ class _TransactionPageState extends State<TransactionPage> {
               ),
             ),
           ),
-          Icon(Icons.filter_alt_sharp),
+          IconButton(onPressed: _showFilterDialog, icon: Icon(Icons.filter_alt_sharp),)
+          
         ],
       ),
     );

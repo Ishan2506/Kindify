@@ -107,8 +107,9 @@ class _CustomOtpScreenState extends State<CustomOtpScreen> {
           debugPrint("response:- ${response.body}_${response.statusCode}");
           if(response.statusCode == 200){
             String jwtToken = jsonRes['token'] as String;
+            String userId = jsonRes['user']['id'] as String;
             await TokenStorageService.saveToken(jwtToken);
-            
+            await TokenStorageService.saveUserId(userId);
             ToastService.showSuccess(context, jsonRes['message'] as String);
             Navigator.pushAndRemoveUntil(
               context,
