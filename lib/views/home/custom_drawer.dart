@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:kindify_app/services/token_storage.dart';
 import 'package:kindify_app/utils/colors.dart';
 import 'package:kindify_app/views/Profile/profile.dart';
+import 'package:kindify_app/views/Profile/profile_page.dart';
 import 'package:kindify_app/views/home_drawer/aboutkindify_page.dart';
 import 'package:kindify_app/views/home_drawer/contactwithus_page.dart';
 import 'package:kindify_app/views/home_drawer/helpsupport_page.dart';
 import 'package:kindify_app/views/home_drawer/join_volunteer_screen.dart';
 import 'package:kindify_app/views/login/login_screen.dart';
+import 'package:kindify_app/views/request/request_select_date.dart';
 import 'package:kindify_app/views/transaction/transactionPage.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -178,7 +180,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
             leading: Icon(Icons.person),
             title: Text("Profile"),
             onTap: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => ProfileScreenWithTabs()));
+              Navigator.push(context, MaterialPageRoute(builder: (context) => ProfilePages()));
             },
           ),
           ListTile(
@@ -246,10 +248,15 @@ class _CustomDrawerState extends State<CustomDrawer> {
             },
           ),
           ListTile(
-            leading: Icon(Icons.handshake),
+            leading: Icon(Icons.edit_calendar),
             title: Text("Request for donation"),
             onTap: () {
-              print("Partner with Us clicked");
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) =>  RequestSelectDate(), // replace with your login widget
+                ),
+              );
             },
           ),
           ListTile(
