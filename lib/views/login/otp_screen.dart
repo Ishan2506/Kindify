@@ -58,7 +58,7 @@ class _CustomOtpScreenState extends State<CustomOtpScreen> {
       isLoading = true;
     });
     try{
-      var response = await http.post(Uri.parse("https://kindify-backend-zspk.onrender.com/auth/login"),
+      var response = await http.post(Uri.parse("https://kindify.onrender.com/auth/login"),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode({
           "email": widget.email,
@@ -93,10 +93,10 @@ class _CustomOtpScreenState extends State<CustomOtpScreen> {
   }
 
 
-  Future<void> _verify() async {
+  Future<void> _verify() async { //https://kindify.onrender.com
     try{
       if(otpCode.length ==6){
-          var response = await http.post(Uri.parse("https://kindify-backend-zspk.onrender.com/auth/verify-login"),
+          var response = await http.post(Uri.parse("https://kindify.onrender.com/auth/verify-login"),
               headers: {"Content-Type": "application/json"},
               body: jsonEncode({
                 "email": widget.email,
@@ -104,12 +104,14 @@ class _CustomOtpScreenState extends State<CustomOtpScreen> {
               }),
           );
           final jsonRes = jsonDecode(response.body) as Map<String,dynamic>;
+          Map<String, dynamic> user = jsonRes['user'] as Map<String, dynamic>;
           debugPrint("response:- ${response.body}_${response.statusCode}");
           if(response.statusCode == 200){
             String jwtToken = jsonRes['token'] as String;
             String userId = jsonRes['user']['id'] as String;
             await TokenStorageService.saveToken(jwtToken);
             await TokenStorageService.saveUserId(userId);
+            await TokenStorageService.saveUser(user);
             ToastService.showSuccess(context, jsonRes['message'] as String);
             Navigator.pushAndRemoveUntil(
               context,

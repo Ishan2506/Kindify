@@ -77,7 +77,7 @@ class StorySection extends StatelessWidget {
     // Construct the full image URL
     String fullImageUrl = story.imageUrl.startsWith('http')
         ? story.imageUrl
-        : 'https://kindify-backend-zspk.onrender.com${story.imageUrl}';
+        : 'https://kindify.onrender.com${story.imageUrl}';
 
     return Container(
       margin: const EdgeInsets.only(right: 16),

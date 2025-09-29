@@ -42,7 +42,7 @@ class RequestController{
 
   Future<void> pickDate(BuildContext context) async {
     final DateTime today = DateTime.now();
-    DateTime threeDaysLater = today.add(const Duration(days: 3));
+    DateTime threeDaysLater = today.add(const Duration(days: 5));
     final DateTime lastDate = today.add(const Duration(days: 365));
 
     final DateTime? picked = await showDatePicker(

@@ -1,13 +1,9 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:kindify_app/services/api_client.dart';
-import 'package:kindify_app/services/toast_service.dart';
 import 'package:kindify_app/utils/colors.dart';
-import 'package:kindify_app/views/category/donation_page.dart';
 import 'package:kindify_app/views/category/foodDistribution.dart';
 import 'package:kindify_app/views/category/special_category.dart';
+import 'package:kindify_app/views/login/login_screen.dart';
+import 'package:kindify_app/views/terms_conditions/terms_conditions.dart';
 
 class CategoryPage extends StatefulWidget {
   const CategoryPage({super.key});
@@ -17,90 +13,28 @@ class CategoryPage extends StatefulWidget {
 }
 
 class _CategoryPageState extends State<CategoryPage> {
-  late Future<List<dynamic>> _categoriesFuture;
-  final ApiClientService _apiClient = ApiClientService();
-  @override
-  void initState() {
-    super.initState();
-    _categoriesFuture = fetchCategories();
-  }
-  IconData getIconDataFromApiString(String? iconString) {
-  switch (iconString) {
-    case "FontAwesomeIcons.star":
-      return FontAwesomeIcons.star;
-    case "FontAwesomeIcons.bagShopping":
-      return FontAwesomeIcons.bagShopping;
-    case "FontAwesomeIcons.utensils":
-      return FontAwesomeIcons.utensils;
-    case "FontAwesomeIcons.cakeCandles":
-      return FontAwesomeIcons.cakeCandles;
-    case "FontAwesomeIcons.userTie":
-      return FontAwesomeIcons.userTie;
-    case "FontAwesomeIcons.book":
-      return FontAwesomeIcons.book;
-    case "FontAwesomeIcons.bottleDroplet":
-      return FontAwesomeIcons.bottleDroplet;
-    case "FontAwesomeIcons.indianRupeeSign":
-      return FontAwesomeIcons.indianRupeeSign;
-    default:
-      return FontAwesomeIcons.question; // fallback
-  }
-}
-  Future<List<dynamic>> fetchCategories() async {
-    final response = await _apiClient.get("/api/categories");
-
-    try{
-      if (response.statusCode == 200) {
-        debugPrint(response.body.toString());
-        return jsonDecode(response.body);
-      } else {
-        ToastService.showError(context, "Failed to load categories");
-        return [];
-      }
-    }
-    catch(e)
-    {
-      ToastService.showError(context, e.toString());
-      return [];
-    }
-  }
-
-
-
-
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: FutureBuilder<List<dynamic>>(
-        future: _categoriesFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text("Error: ${snapshot.error}"));
-          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(child: Text("No categories found"));
-          }
-
-          final categories = snapshot.data!;
-
-          return SingleChildScrollView(
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(6),
+          child: SizedBox(
+            width: MediaQuery.sizeOf(context).width,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const SizedBox(height: kToolbarHeight),
                 Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  //padding: const EdgeInsets.all(12.0), 
+                  padding: const EdgeInsets.symmetric(vertical: 8),
                   child: _specialCardColor(
                     context,
                     () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const SpecialCategoriesPage(),
+                          builder: (context) {
+                            return SpecialCategoriesPage();
+                          },
                         ),
                       );
                     },
@@ -108,111 +42,63 @@ class _CategoryPageState extends State<CategoryPage> {
                     "Special Distribution",
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0).copyWith(
-                    bottom: 50, // extra space for BottomNavigationBar
-                  ),
-                  child: Center(
-                    child: Wrap(
-                      alignment: WrapAlignment.center,
-                      runAlignment: WrapAlignment.center,
-                      spacing: MediaQuery.sizeOf(context).width * 0.08,
-                      runSpacing: MediaQuery.sizeOf(context).height * 0.02,
-                      children: categories.skip(1).map((category) {
-                        final name = category["name"] ?? "Unknown";
-                        final iconString = category["icon"] as String?;
-                        final iconData = getIconDataFromApiString(iconString);
-                    
-                        return _categoryCard(
+                Wrap(
+                  runAlignment: WrapAlignment.center,
+                  spacing: MediaQuery.sizeOf(context).width * 0.08,
+                  runSpacing: MediaQuery.sizeOf(context).height * 0.02,
+                  children: [
+                    _categoryCard(
+                      context,
+                      () {
+                        Navigator.push(
                           context,
-                          () {
-                            // Navigate dynamically
-                            // Example:
-                            // Navigator.push(context, MaterialPageRoute(builder: (_) => DonationScreen(...)));
-                          },
-                          iconData,
-                          name,
+                          MaterialPageRoute(
+                            builder: (context) {
+                              return FoodDistribution();
+                            },
+                          ),
                         );
-                      }).toList(),
+                      },
+                      Icons.food_bank_rounded,
+                      "Food Distribution",
                     ),
-                  ),
+                    _categoryCard(
+                      context,
+                      () {},
+                      Icons.backpack,
+                      "Bags Distribution",
+                    ),
+                    _categoryCard(
+                      context,
+                      () {},
+                      Icons.menu_book_sharp,
+                      "Books Distribution",
+                    ),
+                    _categoryCard(
+                      context,
+                      () {},
+                      Icons.checkroom_rounded,
+                      "Clothes Distribution",
+                    ),
+                    _categoryCard(
+                      context,
+                      () {},
+                      Icons.school,
+                      "Fees Donation",
+                    ),
+                    _categoryCard(
+                      context,
+                      () {},
+                      Icons.local_grocery_store_sharp,
+                      "Grocery Distribution",
+                    ),
+                  ],
                 ),
               ],
             ),
-          );
-        },
+          ),
+        ),
       ),
-
-      // body: SingleChildScrollView(
-      //   child: SizedBox(
-      //     width: MediaQuery.sizeOf(context).width,
-      //     child: Column(
-      //       crossAxisAlignment: CrossAxisAlignment.center,
-      //       children: [
-      //         SizedBox(height: kToolbarHeight),
-      //         Padding(
-      //           padding: const EdgeInsets.symmetric(vertical: 12),
-      //           child: _specialCardColor(context,() {
-      //              Navigator.push(
-      //                   context,
-      //                   MaterialPageRoute(
-      //                     builder: (context) {
-      //                       return SpecialCategoriesPage();
-      //                     },
-      //                   ),
-      //                 );
-
-      //           },Icons.stars,"Special Distribution"),
-      //         ),              Wrap(
-      //           runAlignment: WrapAlignment.center,
-      //           spacing: MediaQuery.sizeOf(context).width * 0.08,
-      //           runSpacing: MediaQuery.sizeOf(context).height * 0.02,
-      //           children: [
-      //             _categoryCard(
-      //               context,
-      //               () {
-      //                 Navigator.push(
-      //                   context,
-      //                   MaterialPageRoute(
-      //                     builder: (context) {
-      //                       return FoodDistribution();
-      //                     },
-      //                   ),
-      //                 );
-      //               },
-      //               Icons.food_bank_rounded,
-      //               "Food Distribution",
-      //             ),
-      //             _categoryCard(
-      //               context,
-      //               () {},
-      //               Icons.shopping_bag_outlined,
-      //               "Bags Distribution",
-      //             ),
-      //             _categoryCard(
-      //               context,
-      //               () {},
-      //               Icons.menu_book_sharp,
-      //               "Books Distribution",
-      //             ),
-      //             _categoryCard(
-      //               context,
-      //               () {},
-      //               Icons.shopping_bag_outlined,
-      //               "Bags Distribution",
-      //             ),
-      //             _categoryCard(
-      //               context,
-      //               () {},
-      //               Icons.menu_book_sharp,
-      //               "Books Distribution",
-      //             ),
-      //           ],
-      //         ),
-      //       ],
-      //     ),
-      //   ),
-      // ),
       // bottomNavigationBar: BottomNavBar(),
     );
   }
@@ -362,12 +248,13 @@ class _CategoryPageState extends State<CategoryPage> {
   }
 
   Widget _specialCardColor(
-      BuildContext context,
-      VoidCallback onPress,
-      IconData icon,
-      String categoryName,
-      ) {
-    final double cardSize = MediaQuery.sizeOf(context).width * 0.35; // same width & height
+    BuildContext context,
+    VoidCallback onPress,
+    IconData icon,
+    String categoryName,
+  ) {
+    final double cardSize =
+        MediaQuery.sizeOf(context).width * 0.35; // same width & height
 
     return InkWell(
       onTap: onPress,

@@ -218,11 +218,10 @@ class _TransactionPageState extends State<TransactionPage> {
               child: FlipCard(
                 front: _buildFront(
                   "10",
-                  Colors.blue,
                   "Given \nDonations",
                   numberSize: 30,
                 ),
-                back: _buildBack(Colors.deepOrange, Icons.favorite),
+                back: _buildBack(Icons.favorite),
                 interval: const Duration(seconds: 4),
               ),
             ),
@@ -234,11 +233,10 @@ class _TransactionPageState extends State<TransactionPage> {
               child: FlipCard(
                 front: _buildFront(
                   "₹${amtConverter(10000)}",
-                  Colors.blue,
                   "Amount \nDonated",
                   numberSize: 30,
                 ),
-                back: _buildBack(Colors.deepOrange, Icons.currency_rupee_rounded),
+                back: _buildBack(Icons.currency_rupee_rounded),
                 interval: const Duration(seconds: 4),
               ),
             ),
@@ -320,7 +318,6 @@ class _TransactionPageState extends State<TransactionPage> {
 
   static Widget _buildFront(
     String text,
-    Color color,
     String msg, {
     double numberSize = 36, // default size for number
     double msgSize = 18, // default size for message
@@ -328,7 +325,7 @@ class _TransactionPageState extends State<TransactionPage> {
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [color.withOpacity(0.9), color.withOpacity(0.7)],
+          colors: [AppColors.primaryPink, AppColors.orange],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -363,9 +360,9 @@ class _TransactionPageState extends State<TransactionPage> {
               child: Text(
                 msg,
                 style: TextStyle(
-                  color: Colors.white70,
+                  color: Colors.white,
                   fontSize: msgSize,
-                  fontWeight: FontWeight.w500,
+                  fontWeight: FontWeight.bold,
                 ),
                 textAlign: TextAlign.center,
                 overflow: TextOverflow.ellipsis,
@@ -381,11 +378,11 @@ class _TransactionPageState extends State<TransactionPage> {
     );
   }
 
-  static Widget _buildBack(Color color, IconData icon) {
+  static Widget _buildBack(IconData icon) {
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [color.withOpacity(0.9), color.withOpacity(0.7)],
+          colors: [AppColors.primaryPink, AppColors.orange],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),

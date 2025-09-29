@@ -111,7 +111,7 @@ class _StoryViewScreenState extends State<StoryViewScreen> with SingleTickerProv
                 final story = widget.stories[index];
                 final fullImageUrl = story.imageUrl.startsWith('http')
                     ? story.imageUrl
-                    : 'https://kindify-backend-zspk.onrender.com${story.imageUrl}';
+                    : 'https://kindify.onrender.com${story.imageUrl}';
 
                 return Container(
                   color: Colors.black,
@@ -203,7 +203,7 @@ class _StoryViewScreenState extends State<StoryViewScreen> with SingleTickerProv
                     child: CircleAvatar(
                       radius: 16,
                       backgroundImage: NetworkImage(
-                        'https://kindify-backend-zspk.onrender.com${widget.stories[_currentIndex].imageUrl}',
+                        'https://kindify.onrender.com${widget.stories[_currentIndex].imageUrl}',
                       ),
                     ),
                   ),

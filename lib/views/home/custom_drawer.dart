@@ -2,20 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:kindify_app/services/token_storage.dart';
 import 'package:kindify_app/utils/colors.dart';
 import 'package:kindify_app/views/Profile/profile.dart';
-import 'package:kindify_app/views/Profile/profile_page.dart';
 import 'package:kindify_app/views/home_drawer/aboutkindify_page.dart';
 import 'package:kindify_app/views/home_drawer/contactwithus_page.dart';
 import 'package:kindify_app/views/home_drawer/helpsupport_page.dart';
 import 'package:kindify_app/views/home_drawer/join_volunteer_screen.dart';
 import 'package:kindify_app/views/login/login_screen.dart';
 import 'package:kindify_app/views/request/request_select_date.dart';
-import 'package:kindify_app/views/transaction/transactionPage.dart';
 import 'package:share_plus/share_plus.dart';
 
 class CustomDrawer extends StatefulWidget {
   @override
   State<CustomDrawer> createState() => _CustomDrawerState();
 }
+
 void _showLogoutDialog(BuildContext context) {
   showDialog(
     context: context,
@@ -137,13 +136,16 @@ void _showLogoutDialog(BuildContext context) {
   );
 }
 
-void _shareApp(){
-  const appLink = "https://play.google.com/store/apps/details?id=com.pubg.imobile";
 
-  Share.share("Check out this amazing app Kindify! Download here: $appLink",
-      subject: "Kindify App",);
+void _shareApp() {
+  const appLink =
+      "https://play.google.com/store/apps/details?id=com.pubg.imobile";
+
+  Share.share(
+    "Check out this amazing app Kindify! Download here: $appLink",
+    subject: "Kindify App",
+  );
 }
-
 
 class _CustomDrawerState extends State<CustomDrawer> {
   @override
@@ -151,12 +153,13 @@ class _CustomDrawerState extends State<CustomDrawer> {
     return Drawer(
       child: Column(
         children: [
-          // 🔹 Top AppBar inside Drawer
+          // 🔹 Fixed Top Options Container
           Container(
             padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
+            width: double.infinity,
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: [AppColors.primaryPink,AppColors.orange],
+                colors: [AppColors.primaryPink, AppColors.orange],
               ),
             ),
             child: ListTile(
@@ -175,113 +178,121 @@ class _CustomDrawerState extends State<CustomDrawer> {
             ),
           ),
 
-          // 🔹 Drawer items
-          ListTile(
-            leading: Icon(Icons.person),
-            title: Text("Profile"),
-            onTap: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => ProfilePages()));
-            },
-          ),
-          ListTile(
-            leading: Icon(Icons.payment),
-            title: Text("Total Transaction"),
-            onTap: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => TransactionPage()));
-            },
-          ),
-          ListTile(
-            leading: Icon(Icons.info),
-            title: Text("About Kindify"),
-            onTap: () {
-              Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) =>  AboutKindifyPage(), // replace with your login widget
-                    ),
-              );
-            },
-          ),
-          ListTile(
-            leading: Icon(Icons.feedback),
-            title: Text("Feedback"),
-            onTap: () {
-              print("Feedback clicked");
-            },
-          ),
-          ListTile(
-            leading: Icon(Icons.star),
-            title: Text("Rate Us"),
-            onTap: () {
-              print("Rate Us clicked");
-            },
-          ),
-          ListTile(
-            leading: Icon(Icons.message),
-            title: Text("Connect with Us"),
-            onTap: () {
-              Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) =>  ContactWithUsPage(), // replace with your login widget
-                    ),
-              );
-            },
-          ),
-          ListTile(
-            leading: Icon(Icons.group_add),
-            title: Text("Join as a Volunteer"),
-            onTap: () {
-              Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) =>  JoinVolunteerScreen(), // replace with your login widget
-                    ),
-              );
-            },
-          ),
-          ListTile(
-            leading: Icon(Icons.handshake),
-            title: Text("Partner with Us"),
-            onTap: () {
-              print("Partner with Us clicked");
-            },
-          ),
-          ListTile(
-            leading: Icon(Icons.edit_calendar),
-            title: Text("Request for donation"),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) =>  RequestSelectDate(), // replace with your login widget
-                ),
-              );
-            },
-          ),
-          ListTile(
-            leading: Icon(Icons.support_agent),
-            title: Text("Help & Support"),
-            onTap: () {
-              Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) =>  HelpSupportPage(), // replace with your login widget
-                    ),
-              );
-            },
-          ),
-          ListTile(
-            leading: Icon(Icons.share),
-            title: Text("Share App"),
-            onTap: () {
-              Navigator.pop(context);
-              _shareApp();
-            },
-          ),
-          Spacer(),
+          // 🔹 Scrollable Middle Content
+          Expanded(
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  // ListTile(
+                  //   leading: Icon(Icons.person),
+                  //   title: Text("Profile"),
+                  //   onTap: () {
+                  //     Navigator.push(
+                  //       context,
+                  //       MaterialPageRoute(
+                  //         builder: (context) => ProfileScreenWithTabs(),
+                  //       ),
+                  //     );
+                  //   },
+                  // ),
+                  ListTile(
+                    leading: Icon(Icons.payment),
+                    title: Text("Total Donation"),
+                    onTap: () {
+                      print("Total Donation clicked");
+                    },
+                  ),
+                  ListTile(
+                    leading: Icon(Icons.info),
+                    title: Text("About Kindify"),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => AboutKindifyPage(),
+                        ),
+                      );
+                    },
+                  ),
+                  // ListTile(
+                  //   leading: Icon(Icons.feedback),
+                  //   title: Text("Feedback"),
+                  //   onTap: () {
+                  //     print("Feedback clicked");
+                  //   },
+                  // ),
+                  ListTile(
+                    leading: Icon(Icons.edit_calendar),
+                    title: Text("Request"),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => RequestSelectDate(),
+                        ),
+                      );
+                    },
+                  ),
+                  ListTile(
+                    leading: Icon(Icons.message),
+                    title: Text("Connect with Us"),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ContactWithUsPage(),
+                        ),
+                      );
+                    },
+                  ),
+                  ListTile(
+                    leading: Icon(Icons.group_add),
+                    title: Text("Join as a Volunteer"),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => JoinVolunteerScreen(),
+                        ),
+                      );
+                    },
+                  ),
+                  ListTile(
+                    leading: Icon(Icons.handshake),
+                    title: Text("Partner with Us"),
+                    onTap: () {
+                      print("Partner with Us clicked");
+                    },
+                  ),
+                  ListTile(
+                    leading: Icon(Icons.support_agent),
+                    title: Text("Help & Support"),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => HelpSupportPage(),
+                        ),
+                      );
+                    },
+                  ),
+                  ListTile(
+                    leading: Icon(Icons.share),
+                    title: Text("Share App"),
+                    onTap: () {
+                      Navigator.pop(context);
+                      _shareApp();
+                    },
+                  ),
 
-          // 🔹 Logout Button
+                  // 🔹 Add spacing before logout
+                  SizedBox(height: 30),
+                ],
+              ),
+            ),
+          ),
+
+          // 🔹 Fixed Logout Button (always bottom)
           Container(
             width: double.infinity,
             decoration: BoxDecoration(
@@ -291,10 +302,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
             ),
             child: ListTile(
               leading: Icon(Icons.logout, color: Colors.white),
-              title: Text(
-                "Logout",
-                style: TextStyle(color: Colors.white),
-              ),
+              title: Text("Logout", style: TextStyle(color: Colors.white)),
               onTap: () {
                 _showLogoutDialog(context);
               },

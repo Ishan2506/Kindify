@@ -183,17 +183,21 @@ Future<void> _toggleSave() async {
               children: [
                 Column(
                   children: [
-                    IconButton(
-                      icon: Icon(
-                        isLiked ? Icons.favorite : Icons.favorite_border,
-                        color: isLiked ? Colors.red : Colors.grey,
-                      ),
-                      onPressed: _toggleLike,
+                    Row(
+                      children: [
+                        IconButton(
+                          icon: Icon(
+                            isLiked ? Icons.favorite : Icons.favorite_border,
+                            color: isLiked ? Colors.red : Colors.grey,
+                          ),
+                          onPressed: _toggleLike,
+                        ),
+                        Text('${widget.totalLikes}',style: TextStyle(fontSize: 18),)
+                      ],
                     ),
-                    Text('${widget.totalLikes} Likes')
                   ],
                 ),
-                SizedBox(width: screenWidth * 0.02),
+                SizedBox(width: screenWidth * 0.04),
                 IconButton(icon: const Icon(Icons.send), onPressed: _sharePost),
                 SizedBox(width: screenWidth * 0.02),
                 IconButton(

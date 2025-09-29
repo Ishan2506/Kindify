@@ -239,22 +239,22 @@ class ProfilePages extends StatelessWidget {
               clipBehavior: Clip.none,
               children: [
                 /// Back button + Title (LEFT aligned)
-                Row(
-                  children: [
-                    IconButton(
-                      onPressed: () => Navigator.pop(context),
-                      icon: const Icon(Icons.arrow_back, color: Colors.white),
-                    ),
-                    const Text(
-                      "Profile",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
+                // Row(
+                //   children: [
+                //     IconButton(
+                //       onPressed: () => Navigator.pop(context),
+                //       icon: const Icon(Icons.arrow_back, color: Colors.white),
+                //     ),
+                //     const Text(
+                //       "Profile",
+                //       style: TextStyle(
+                //         color: Colors.white,
+                //         fontSize: 18,
+                //         fontWeight: FontWeight.bold,
+                //       ),
+                //     ),
+                //   ],
+                // ),
 
                 /// 🔹 Profile Image (CENTER, overlapping bottom)
                 Positioned(

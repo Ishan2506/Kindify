@@ -1,23 +1,79 @@
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:kindify_app/controller/request/requestController.dart';
+import 'package:kindify_app/services/location_service.dart';
+import 'package:kindify_app/services/token_storage.dart';
 import 'package:kindify_app/utils/colors.dart';
 
 class RequestPage extends StatefulWidget {
   RequestPage({super.key,required this.categoryName,required this.trustName});
   String? categoryName;
   String? trustName;
+
+
   @override
   State<RequestPage> createState() => _RequestPageState();
 }
 
 class _RequestPageState extends State<RequestPage> {
   RequestController requestController = RequestController();
+  TextEditingController stateController = TextEditingController();
+  TextEditingController cityController = TextEditingController();
+  List<String> states = [];
+  String? selectedState;
+  List<String> cities = [];
+  String? selectedCity;
+  @override
+  void initState() {
+    super.initState();
+    _loadStatesAndCities();
+    _loadUserId();
+  }
+  Future<void> _loadStatesAndCities() async {
+    await LocationService.loadStateCityFile();
+    setState(() {
+      states = LocationService.getStates();
+      // Initially, cities empty until state selected
+      cities = [];
+    });
+  }
+  Future<void> _loadUserId() async {
+  Map<String, dynamic>? user = await TokenStorageService.getUser();
+
+  if (user != null) {
+      debugPrint(user['email'] as String? ?? '');
+    setState(() {
+      requestController.email.text = user['email'] as String? ?? ''; // prefill email field
+    });
+  }
+}
+
+  // Future<void> _loadStates() async {
+  //   try {
+  //     final responseStates = await LocationService.fetchStates();
+  //     setState(() {
+  //       states = responseStates;
+  //     });
+  //   } catch (e) {
+  //     debugPrint("Error fetching states: $e");
+  //   }
+  // }
+
+  // Future<void> _loadCities() async {
+  //   try {
+  //     cityStateMapping = await LocationService.fetchAllCitiesWithStates();
+  //     cities = cityStateMapping.map((e) => e["city"]!).toList();
+  //     setState(() {});
+  //   } catch (e) {
+  //     debugPrint("Error fetching cities: $e");
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.sizeOf(context).width;
     final screenHeight = MediaQuery.sizeOf(context).height;
+    double fieldWidth = screenWidth * 0.9;
 
     return SafeArea(
       child: Scaffold(
@@ -71,7 +127,7 @@ class _RequestPageState extends State<RequestPage> {
                         _sizedBoxSpacing(),
 
                         /// Username, phone, email
-                        _sectionTitle("Username"),
+                        _sectionTitle("Details"),
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 4),
                           child: SizedBox(
@@ -84,7 +140,18 @@ class _RequestPageState extends State<RequestPage> {
                           ),
                         ),
                         _inputField(requestController.phone, "Phone", screenWidth),
-                        _inputField(requestController.email, "E-mail", screenWidth),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 4),
+                          child: SizedBox(
+                            width: screenWidth * 0.9,
+                            child: TextFormField(
+                              readOnly: true,
+                              controller: requestController.email,
+                              decoration: _inputDecoration('E-mail'),
+                            ),
+                          ),
+                        ),
+                        //_inputField(requestController.email, "E-mail", screenWidth),
 
                         _sizedBoxSpacing(),
 
@@ -93,9 +160,45 @@ class _RequestPageState extends State<RequestPage> {
                         _inputField(requestController.streetName, "StreetName", screenWidth),
                         Row(
                           children: [
-                            _inputField(requestController.stateName, "State", screenWidth*0.485),
-                            const SizedBox(width: 10),
-                            _inputField(requestController.cityName, "City", screenWidth*0.485),
+                            SizedBox(
+                              width: fieldWidth * 0.44,
+                              child: _dropdownField(
+                                hint: "Select State",
+                                //width: screenWidth * 0.47,
+                                items: states,
+                                selectedValue: selectedState,
+                                onChanged: (val) {
+                                  if (val != null) {
+                                    setState(() {
+                                      selectedState = val;
+                                      // Update city list based on selected state
+                                      cities = LocationService.getCities(val);
+                                      selectedCity = null; // reset selected city
+                                    });
+                                  }
+                                },
+                              ),
+                            ),
+                            SizedBox(width: 10),
+                            SizedBox(
+                              width: fieldWidth * 0.44,
+                              child: _dropdownField(
+                                hint: "Select City",
+                                //width: screenWidth * 0.47,
+                                items: cities,
+                                selectedValue: selectedCity,
+                                onChanged: (val) {
+                                  if (val != null) {
+                                    setState(() {
+                                      selectedCity = val;
+                                    });
+                                  }
+                                },
+                              ),
+                            ),
+                            //_inputField(requestController.stateName, "City", screenWidth*0.485),
+                            //const SizedBox(width: 10),
+                            //_inputField(TextEditingController(text: selectedState ?? ""), "State", screenWidth*0.485),
                           ],
                         ),
                         _inputField(requestController.pinCode, "PinCode", screenWidth * 0.5),
@@ -206,8 +309,8 @@ class _RequestPageState extends State<RequestPage> {
                         ),
 
                         _inputField(requestController.selectItem, "Select required item", screenWidth),
-                        _inputField(requestController.noOfItem, "No. of required item", screenWidth),
-                        _inputField(requestController.msg, "Message", screenWidth),
+                       // _inputField(requestController.noOfItem, "No. of required item", screenWidth),
+                        _inputField(requestController.msg, "Message", screenWidth,maxLines: 4),
 
                         _sendNowBtn(),
                       ],
@@ -224,18 +327,58 @@ class _RequestPageState extends State<RequestPage> {
 
   Widget _sizedBoxSpacing() => const SizedBox(height: 12);
 
-  Widget _inputField(TextEditingController controller, String hint, double width) {
+  Widget _dropdownField({
+    required String hint,
+    required List<String> items,
+    required String? selectedValue,
+    required Function(String?) onChanged,
+  }) {
+    return Padding(
+      padding:  EdgeInsets.all(10.0),
+      child: DropdownButtonFormField<String>(
+        isExpanded: true, // fixes overflow
+        value: items.contains(selectedValue) ? selectedValue : null,
+        decoration: InputDecoration(
+          labelText: hint,
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        ),
+        items: items.map((item) {
+          return DropdownMenuItem(
+            value: item,
+            child: Text(
+              item,
+              overflow: TextOverflow.ellipsis, // truncate long names
+            ),
+          );
+        }).toList(),
+        onChanged: items.isNotEmpty ? onChanged : null,
+        disabledHint: const Text("No options"),
+      ),
+    );
+  }
+
+
+
+  Widget _inputField(
+    TextEditingController controller,
+    String hint,
+    double width, {
+    int maxLines = 1, // default single line
+  }) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: SizedBox(
         width: width * 0.9,
         child: TextFormField(
           controller: controller,
+          maxLines: maxLines,
           decoration: _inputDecoration(hint),
         ),
       ),
     );
   }
+
 
   Widget _sectionTitle(String title) {
     return ShaderMask(

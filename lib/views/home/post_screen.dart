@@ -105,7 +105,7 @@ class PostScreenState extends State<PostScreen> {
                             child: DonationCard(
                               title: post.name,
                               location: post.location,
-                              imageAsset: 'https://kindify-backend-zspk.onrender.com${post.picture}',
+                              imageAsset: 'https://kindify.onrender.com${post.picture}',
                               totalLikes: post.totalLikes,
                               postId: post.id,
                               isLiked: isLiked,
@@ -147,7 +147,7 @@ class PostScreenState extends State<PostScreen> {
                             child: DonationCard(
                               title: post.name,
                               location: post.location,
-                              imageAsset: 'https://kindify-backend-zspk.onrender.com${post.picture}',
+                              imageAsset: 'https://kindify.onrender.com${post.picture}',
                               totalLikes: post.totalLikes,
                               postId: post.id,
                               isLiked: post.isLikedByUser(userId),
@@ -184,7 +184,7 @@ class PostScreenState extends State<PostScreen> {
                             child: DonationCard(
                               title: post.name,
                               location: post.location,
-                              imageAsset: 'https://kindify-backend-zspk.onrender.com${post.picture}',
+                              imageAsset: 'https://kindify.onrender.com${post.picture}',
                               totalLikes: post.totalLikes,
                               postId: post.id,
                               isLiked: post.isLikedByUser(userId),

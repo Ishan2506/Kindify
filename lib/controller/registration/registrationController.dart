@@ -59,7 +59,7 @@ class RegistrationController {
     }
     else{
       try{
-        var uri = Uri.parse("https://kindify-backend-zspk.onrender.com/auth/trust/register");
+        var uri = Uri.parse("https://kindify.onrender.com/auth/trust/register");
         var request = http.MultipartRequest("POST", uri);
 
         final mimeTypes = {

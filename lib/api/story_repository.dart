@@ -9,7 +9,7 @@ import 'package:kindify_app/services/token_storage.dart';
 import '../model/story.dart';
 
 class StoryRepository {
-  static const String baseUrl = 'https://kindify-backend-zspk.onrender.com/api';
+  static const String baseUrl = 'https://kindify.onrender.com/api';
 
   Future<List<Story>> fetchStories() async {
     final ApiClientService _apiClient = ApiClientService();

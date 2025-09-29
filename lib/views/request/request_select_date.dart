@@ -20,72 +20,74 @@ class _RequestSelectDateState extends State<RequestSelectDate> {
     return SafeArea(
       child: Scaffold(
         backgroundColor: AppColors.bgColor,
-        body: Column(
-          children: [
-            _appBarContainer(),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
-              child: Column(
-                children: [
-                  _requestDateContainer(screenWidth, requestController),
-                  _categoryContainer(
-                    screenWidth,
-                        () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => RequestSelectedCategory(
-                            categoryName: "Food Distribution",
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
+              _appBarContainer(),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+                child: Column(
+                  children: [
+                    _requestDateContainer(screenWidth, requestController),
+                    _categoryContainer(
+                      screenWidth,
+                          () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => RequestSelectedCategory(
+                              categoryName: "Food Distribution",
+                            ),
                           ),
-                        ),
-                      );
-                    },
-                    "Food Distribution",
-                    Icons.food_bank_rounded,
-                  ),
-                  _categoryContainer(
-                    screenWidth,
-                        () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => RequestSelectedCategory(
-                            categoryName: "Books Distribution",
+                        );
+                      },
+                      "Food Distribution",
+                      Icons.food_bank_rounded,
+                    ),
+                    _categoryContainer(
+                      screenWidth,
+                          () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => RequestSelectedCategory(
+                              categoryName: "Books Distribution",
+                            ),
                           ),
-                        ),
-                      );
-                    },
-                    "Books Distribution",
-                    Icons.menu_book_sharp,
-                  ),
-                  _categoryContainer(
-                    screenWidth,
-                        () {},
-                    "Bags Distribution",
-                    Icons.backpack,
-                  ),
-                  _categoryContainer(
-                    screenWidth,
-                        () {},
-                    "Fees Donation",
-                    Icons.currency_rupee,
-                  ),
-                  _categoryContainer(
-                    screenWidth,
-                        () {},
-                    "Grocery Distribution",
-                    Icons.local_grocery_store_rounded,
-                  ),
-                  _categoryContainer(
-                    screenWidth,
-                        () {},
-                    "Clothes Distribution",
-                    Icons.checkroom_rounded,
-                  ),
-                ],
+                        );
+                      },
+                      "Books Distribution",
+                      Icons.menu_book_sharp,
+                    ),
+                    _categoryContainer(
+                      screenWidth,
+                          () {},
+                      "Bags Distribution",
+                      Icons.backpack,
+                    ),
+                    _categoryContainer(
+                      screenWidth,
+                          () {},
+                      "Fees Donation",
+                      Icons.currency_rupee,
+                    ),
+                    _categoryContainer(
+                      screenWidth,
+                          () {},
+                      "Grocery Distribution",
+                      Icons.local_grocery_store_rounded,
+                    ),
+                    _categoryContainer(
+                      screenWidth,
+                          () {},
+                      "Clothes Distribution",
+                      Icons.checkroom_rounded,
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

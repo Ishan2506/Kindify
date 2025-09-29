@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
-import 'package:kindify_app/services/toast_service.dart';
 import 'package:kindify_app/utils/colors.dart';
-import 'package:kindify_app/views/home_drawer/helpsupport_page.dart';
 
 class DetailTransaction extends StatefulWidget {
   const DetailTransaction({super.key});
@@ -26,6 +23,7 @@ class _DetailTransactionState extends State<DetailTransaction> {
               _rupeeReceiver(),
               _rupeePayer(),
               _transactionId(),
+              _downloadReceipt(),
             ],
           ),
         ),
@@ -50,17 +48,19 @@ class _DetailTransactionState extends State<DetailTransaction> {
                   fontSize: 14,
                 ),
               ),
-              Icon(Icons.tag_faces_outlined, size: 14,
-                color: Colors.black.withValues(alpha: 0.6),),
+              Icon(
+                Icons.tag_faces_outlined,
+                size: 14,
+                color: Colors.black.withValues(alpha: 0.6),
+              ),
             ],
           ),
           ShaderMask(
-            shaderCallback: (bounds) =>
-                const LinearGradient(
-                  colors: [AppColors.primaryPink, AppColors.orange],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ).createShader(bounds),
+            shaderCallback: (bounds) => const LinearGradient(
+              colors: [AppColors.primaryPink, AppColors.orange],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ).createShader(bounds),
             child: Text(
               "kindfy@gmail.com",
               style: TextStyle(
@@ -76,12 +76,13 @@ class _DetailTransactionState extends State<DetailTransaction> {
   }
 
   Widget _topContainer() {
+    final screenHeight = MediaQuery.sizeOf(context).height;
+    final containerHeight = screenHeight * 0.295;
+
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-      // height: MediaQuery
-      //     .sizeOf(context)
-      //     .height * 0.3,
-      decoration: BoxDecoration(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+      height: containerHeight,
+      decoration: const BoxDecoration(
         gradient: LinearGradient(
           colors: [AppColors.primaryPink, AppColors.orange],
           begin: Alignment.topLeft,
@@ -94,146 +95,115 @@ class _DetailTransactionState extends State<DetailTransaction> {
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [_topRow(), _paymentSuccessAndDateTime()],
+        children: [
+          _topRow(containerHeight),
+          _paymentSuccessAndDateTime(containerHeight),
+        ],
       ),
     );
   }
 
-  Widget _topRow() {
+  Widget _topRow(double containerHeight) {
+    final buttonTextSize = containerHeight * 0.07; // responsive text
+    final iconSize = containerHeight * 0.08; // responsive icons
+
     return Padding(
-      padding: const EdgeInsets.only(top: 8.0),
-      child: Padding(
-        padding: const EdgeInsets.only(left: 6),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            InkWell(onTap: () {
+      padding: const EdgeInsets.only(top: 8.0, left: 6),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          InkWell(
+            onTap: () {
               Navigator.pop(context);
             },
-                child: Icon(
-                    Icons.close, weight: 200, size: 22, color: Colors.white)),
-            Row(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 4),
-                  child: Container(
-                    width: MediaQuery
-                        .sizeOf(context)
-                        .width * 0.25,
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.white),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 4),
-                          child: Icon(
-                            Icons.share_outlined,
-                            size: 13,
-                            color: Colors.white,
-                          ),
-                        ),
-                        Text("Share", style: TextStyle(color: Colors.white)),
-                      ],
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 2),
-                  child: GestureDetector(
-                    onTap: (){
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => HelpSupportPage(),  // Your Help & Support page
-                        ),
-                      );
-                    },
-                    child: Container(
-                      width: MediaQuery
-                          .sizeOf(context)
-                          .width * 0.25,
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.white),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 4),
-                            child: Icon(
-                              Icons.help_outline,
-                              size: 13,
-                              color: Colors.white,
-                              
-                            ),
-                          ),
-                          Text("Help", style: TextStyle(color: Colors.white)),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
+            child: Icon(Icons.close, size: iconSize, color: Colors.white),
+          ),
+          Row(
+            children: [
+              _buildTopButton(
+                "Share",
+                Icons.share_outlined,
+                containerHeight,
+                buttonTextSize,
+              ),
+              const SizedBox(width: 6),
+              _buildTopButton(
+                "Help",
+                Icons.help_outline,
+                containerHeight,
+                buttonTextSize,
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
 
-  Widget _paymentSuccessAndDateTime() {
+  Widget _buildTopButton(
+    String text,
+    IconData icon,
+    double containerHeight,
+    double textSize,
+  ) {
+    return Container(
+      width: MediaQuery.sizeOf(context).width * 0.25,
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.white),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(icon, size: textSize, color: Colors.white),
+          const SizedBox(width: 4),
+          Text(
+            text,
+            style: TextStyle(color: Colors.white, fontSize: textSize),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _paymentSuccessAndDateTime(double containerHeight) {
+    final amountSize = containerHeight * 0.18; // big responsive text
+    final verifiedIconSize = containerHeight * 0.18;
+    final statusSize = containerHeight * 0.1;
+    final dateSize = containerHeight * 0.08;
+
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 15,horizontal: 10),
+      padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
-            child: Row(
-              children: [
-                Text(
-                  "₹${amtConverter(10000)}",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 35,
-                    fontWeight: FontWeight.bold,
-                  ),
+          Row(
+            children: [
+              Text(
+                "₹${amtConverter(10000)}",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: amountSize,
+                  fontWeight: FontWeight.bold,
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 6),
-                  child: Icon(
-                    Icons.verified,
-                    size: 35,
-                    weight: 300,
-                    color: Colors.white,
-                  ),
-                ),
-              ],
+              ),
+              const SizedBox(width: 6),
+              Icon(Icons.verified, size: verifiedIconSize, color: Colors.white),
+            ],
+          ),
+          Text(
+            "Payment Successful",
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: statusSize,
+              fontWeight: FontWeight.bold,
             ),
           ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 6),
-                child: Text(
-                  "Payment Successful",
-                  style: TextStyle(color: Colors.white, fontSize: 20,fontWeight: FontWeight.bold),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                child: Text(
-                  "11 Sep, 2025 at 8:27PM",
-                  style: TextStyle(color: Colors.white, fontSize: 16),
-                ),
-              ),
-            ],
+          const SizedBox(height: 2),
+          Text(
+            "11 Sep, 2025 at 8:27PM",
+            style: TextStyle(color: Colors.white, fontSize: dateSize),
           ),
         ],
       ),
@@ -262,12 +232,11 @@ class _DetailTransactionState extends State<DetailTransaction> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 2),
             child: ShaderMask(
-              shaderCallback: (bounds) =>
-                  const LinearGradient(
-                    colors: [AppColors.primaryPink, AppColors.orange],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ).createShader(bounds),
+              shaderCallback: (bounds) => const LinearGradient(
+                colors: [AppColors.primaryPink, AppColors.orange],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ).createShader(bounds),
               child: Text(
                 "Transaction Completed",
                 style: TextStyle(
@@ -297,123 +266,7 @@ class _DetailTransactionState extends State<DetailTransaction> {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10),
       child: SizedBox(
-        width: MediaQuery
-            .sizeOf(context)
-            .width * 0.9,
-        child: Card(
-          elevation: 0,
-          child: Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  AppColors.primaryPink,
-                  AppColors.orange,
-                ], // your gradient colors
-              ),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(1.5),
-              // thickness of gradient border
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.white, // inner background color
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(10),
-                  child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                      ShaderMask(
-                      shaderCallback: (bounds) => const LinearGradient(
-                  colors: [AppColors.primaryPink, AppColors.orange],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ).createShader(bounds),
-                child: Text(
-                  "To",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-              ShaderMask(
-                shaderCallback: (bounds) =>
-                    const LinearGradient(
-                      colors: [AppColors.primaryPink, AppColors.orange],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ).createShader(bounds),
-                child: Text(
-                  "Dwarkadish Trust",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                Text(
-                "78659552@kotak",
-                style: TextStyle(
-                  color: Colors.black.withValues(alpha: 0.6),
-                  fontSize: 14,
-                ),
-              ),
-              Container(
-                width: MediaQuery.sizeOf(context).width*0.25,
-                height: MediaQuery.sizeOf(context).height*0.05,
-                decoration: BoxDecoration(
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.3), // shadow color
-                      spreadRadius: 1, // how wide the shadow spreads
-                      blurRadius: 1,   // softness of the shadow
-                      offset: const Offset(1, 1), // x,y position of shadow
-                    ),
-                  ],
-                  gradient: LinearGradient(
-                    colors: [AppColors.primaryPink, AppColors.orange],
-                  ),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Center(
-                  child: Text(
-                    softWrap: true,
-                    "Pay Again",
-                    // overflow: TextOverflow.ellipsis,
-                    style: TextStyle(color: Colors.white,fontSize: 12),
-                  ),
-                ),
-              ),
-              ],
-            ),
-            ],
-          ),
-        ),
-      ),
-    ),)
-    ,
-    )
-    ,
-    )
-    ,
-    );
-  }
-
-  Widget _rupeePayer() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6),
-      child: SizedBox(
-        width: MediaQuery
-            .sizeOf(context)
-            .width * 0.9,
+        width: MediaQuery.sizeOf(context).width * 0.9,
         child: Card(
           elevation: 0,
           child: Container(
@@ -440,12 +293,132 @@ class _DetailTransactionState extends State<DetailTransaction> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       ShaderMask(
-                        shaderCallback: (bounds) =>
-                            const LinearGradient(
-                              colors: [AppColors.primaryPink, AppColors.orange],
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                            ).createShader(bounds),
+                        shaderCallback: (bounds) => const LinearGradient(
+                          colors: [AppColors.primaryPink, AppColors.orange],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ).createShader(bounds),
+                        child: Text(
+                          "To",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      ShaderMask(
+                        shaderCallback: (bounds) => const LinearGradient(
+                          colors: [AppColors.primaryPink, AppColors.orange],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ).createShader(bounds),
+                        child: Text(
+                          "Dwarkadish Trust",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            "78659552@kotak",
+                            style: TextStyle(
+                              color: Colors.black.withValues(alpha: 0.6),
+                              fontSize: 14,
+                            ),
+                          ),
+                          Container(
+                            width: MediaQuery.sizeOf(context).width * 0.25,
+                            height: MediaQuery.sizeOf(context).height * 0.05,
+                            decoration: BoxDecoration(
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withValues(alpha: 0.3),
+                                  // shadow color
+                                  spreadRadius: 1,
+                                  // how wide the shadow spreads
+                                  blurRadius: 1,
+                                  // softness of the shadow
+                                  offset: const Offset(
+                                    1,
+                                    1,
+                                  ), // x,y position of shadow
+                                ),
+                              ],
+                              gradient: LinearGradient(
+                                colors: [
+                                  AppColors.primaryPink,
+                                  AppColors.orange,
+                                ],
+                              ),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Center(
+                              child: Text(
+                                softWrap: true,
+                                "Pay Again",
+                                // overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _rupeePayer() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6),
+      child: SizedBox(
+        width: MediaQuery.sizeOf(context).width * 0.9,
+        child: Card(
+          elevation: 0,
+          child: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  AppColors.primaryPink,
+                  AppColors.orange,
+                ], // your gradient colors
+              ),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(1.5),
+              // thickness of gradient border
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white, // inner background color
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      ShaderMask(
+                        shaderCallback: (bounds) => const LinearGradient(
+                          colors: [AppColors.primaryPink, AppColors.orange],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ).createShader(bounds),
                         child: Text(
                           "From",
                           style: TextStyle(
@@ -456,12 +429,11 @@ class _DetailTransactionState extends State<DetailTransaction> {
                         ),
                       ),
                       ShaderMask(
-                        shaderCallback: (bounds) =>
-                            const LinearGradient(
-                              colors: [AppColors.primaryPink, AppColors.orange],
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                            ).createShader(bounds),
+                        shaderCallback: (bounds) => const LinearGradient(
+                          colors: [AppColors.primaryPink, AppColors.orange],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ).createShader(bounds),
                         child: Text(
                           "Devarsh Shah Gls",
                           style: TextStyle(
@@ -494,13 +466,10 @@ class _DetailTransactionState extends State<DetailTransaction> {
   }
 
   Widget _transactionId() {
-    const transactionId = "10051983201"; // You can also make it dynamic
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: SizedBox(
-        width: MediaQuery
-            .sizeOf(context)
-            .width * 0.9,
+        width: MediaQuery.sizeOf(context).width * 0.9,
         child: Card(
           elevation: 0,
           child: Container(
@@ -552,7 +521,7 @@ class _DetailTransactionState extends State<DetailTransaction> {
                                 ),
                               ),
                               Text(
-                                transactionId,
+                                "10051983201",
                                 style: TextStyle(
                                   color: Colors.black.withValues(alpha: 0.6),
                                   fontSize: 14,
@@ -560,35 +529,96 @@ class _DetailTransactionState extends State<DetailTransaction> {
                               ),
                             ],
                           ),
+                          Icon(
+                            Icons.copy_outlined,
+                            size: 14,
+                            color: Colors.black.withValues(alpha: 0.6),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _downloadReceipt() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: SizedBox(
+        width: MediaQuery.sizeOf(context).width * 0.9,
+        child: Card(
+          elevation: 0,
+          child: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  AppColors.primaryPink,
+                  AppColors.orange,
+                ], // your gradient colors
+              ),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(1.5),
+              // thickness of gradient border
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white, // inner background color
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
                           Row(
                             children: [
-                              // Copy Icon
-                              InkWell(
-                                onTap: () {
-                                  Clipboard.setData(const ClipboardData(text: transactionId));
-                                  ToastService.showSuccess(context, "Transaction ID copied!");
-                                },
+                              Padding(
+                                padding: const EdgeInsets.only(right: 4),
                                 child: Icon(
-                                  Icons.copy_outlined,
-                                  size: 24, // slightly bigger for better touch
-                                  color: Colors.black.withOpacity(0.6),
+                                  Icons.receipt_long,
+                                  size: 16,
+                                  color: Colors.black.withValues(alpha: 0.6),
                                 ),
                               ),
-                              const SizedBox(width: 15), // small spacing between icons
-                              // Download Icon
-                              InkWell(
-                                onTap: () {
-                                  // Handle download action here
-                                },
-                                child: Icon(
-                                  Icons.download_outlined,
-                                  size: 25,
-                                  color: Colors.black.withOpacity(0.6),
+                              ShaderMask(
+                                shaderCallback: (bounds) =>
+                                    const LinearGradient(
+                                      colors: [
+                                        AppColors.primaryPink,
+                                        AppColors.orange,
+                                      ],
+                                      begin: Alignment.topLeft,
+                                      end: Alignment.bottomRight,
+                                    ).createShader(bounds),
+                                child: Text(
+                                  "Download Receipt",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                               ),
                             ],
-                          )
-
+                          ),
+                          InkWell(
+                            onTap: () {},
+                            child: Icon(
+                              Icons.download,
+                              size: 14,
+                              color: Colors.black.withValues(alpha: 0.6),
+                            ),
+                          ),
                         ],
                       ),
                     ],
